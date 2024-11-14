@@ -1,0 +1,11 @@
+CREATE TABLE users (
+    id SERIAL,
+    name VARCHAR(100) NOT NULL,
+    login VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP default CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP NOT NULL,
+    last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted BOOLEAN NOT NULL DEFAULT FALSE
+    PRIMARY KEY (id)
+);
