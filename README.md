@@ -49,6 +49,47 @@ Architecture:
     Rel_D(worker, bucket_compress, "Save compressed files")
 ```
 
+## :card_file_box: Database
+
+```mermaid
+  erDiagram
+    folder {
+        INT id
+        INT parent_id
+        STRING name
+        DATETIME created_at
+        DATETIME updated_at
+        BOOL deleted
+    }
+
+    file {
+        INT id
+        INT folder_id
+        INT owner_id
+        STRING name
+        STRING type
+        STRING path
+        DATETIME created_at
+        DATETIME updated_at
+        BOOL deleted
+    }
+
+    user {
+        INT id
+        STRING name
+        STRING login
+        STRING password
+        DATETIME created_at
+        DATETIME updated_at
+        DATETIME last_login
+        BOOL deleted
+    }
+
+    user ||--o{ file : "one to many"
+    folder ||--o{ file : "one to many"
+    folder ||--o{ folder : "one to many"
+```
+
 ## :computer: Technologies
 
 - [Go](https://golang.org/)
