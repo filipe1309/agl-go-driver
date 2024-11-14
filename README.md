@@ -15,6 +15,11 @@ Architecture:
 
 ## :art: Architecture
 
+> [!NOTE]
+> The following diagram was generated using [Mermaid](https://mermaid-js.github.io/mermaid/).
+> It is a C4 model diagram at the container level, see more at [C4 Model](https://c4model.com/).
+
+
 ```mermaid
   C4Container
     title Personal Go Drive
