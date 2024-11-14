@@ -98,12 +98,15 @@ Architecture:
 ## :computer: Technologies
 
 - [Go](https://golang.org/)
+- [RabbitMQ](https://www.rabbitmq.com/)
+- [Docker](https://www.docker.com/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## :scroll: Requirements
 
 - [Go](https://golang.org/)
+- [Docker](https://www.docker.com/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
