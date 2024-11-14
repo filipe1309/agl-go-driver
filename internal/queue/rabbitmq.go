@@ -13,6 +13,12 @@ type RabbitMQConfig struct {
 	Timeout   time.Time
 }
 
+func newRabbitMQConnection(cfg RabbitMQConfig) (rc *RabbitMQConnection, err error) {
+	rc.cfg = cfg
+	rc.conn, err = amqp.Dial(cfg.URL)
+	return rc, err
+}
+
 type RabbitMQConnection struct {
 	cfg  RabbitMQConfig
 	conn *amqp.Connection
@@ -37,7 +43,7 @@ func (rc *RabbitMQConnection) Publish(msg []byte) error {
 	return conn.PublishWithContext(ctx, "", rc.cfg.TopicName, false, false, message)
 }
 
-func (rc *RabbitMQConnection) Consume() error {
+func (rc *RabbitMQConnection) Consume(chanDTO chan<- QueueDTO) error {
 	conn, err := rc.conn.Channel()
 	if err != nil {
 		return err
@@ -54,8 +60,9 @@ func (rc *RabbitMQConnection) Consume() error {
 	}
 
 	for deliveryChan := range msgs {
-		// Do something with the message
-		_ = deliveryChan
+		dto := QueueDTO{}
+		dto.Unmarshal(deliveryChan.Body)
+		chanDTO <- dto
 	}
 
 	return nil
