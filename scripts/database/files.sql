@@ -7,8 +7,8 @@ CREATE TABLE files (
     path VARCHAR(255) NOT NULL,
     created_at TIMESTAMP default CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP NOT NULL,
-    deleted BOOLEAN NOT NULL DEFAULT FALSE
-    PRIMARY KEY (id)
+    deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (id),
     CONSTRAINT fk_files_folder_id FOREIGN KEY (folder_id) REFERENCES folders(id),
     CONSTRAINT fk_files_owner_id FOREIGN KEY (owner_id) REFERENCES users(id)
 );

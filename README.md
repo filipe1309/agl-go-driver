@@ -33,7 +33,7 @@ Architecture:
 
       Container(cli_interface, "CLI", "Interface that allows consumers to access Drive API via terminal")
 
-      Container(worker, "Worker", "Compress files")
+      Container(worker, "Worker", "Compress files and remove raw files")
       
       ContainerDb(db, "Storage", "Stores the links of the uploaded files")
       
