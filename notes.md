@@ -2,6 +2,10 @@
 
 > notes taken during the course
 
+```sh
+go mod init github.com/filipe1309/agl-go-driver
+```
+
 Executing SQL scripts:
 
 ```bash
@@ -22,4 +26,10 @@ $ psql -h docker.for.mac.host.internal -U postgres -d imersao < files.sql
 $ psql -h docker.for.mac.host.internal -U postgres
 > \c imersao
 > \dt
+```
+
+## Worker
+
+```bash
+go mod tidy
 ```

@@ -3,6 +3,7 @@ package queue
 import (
 	"fmt"
 	"log"
+	"reflect"
 )
 
 const (
@@ -11,15 +12,18 @@ const (
 
 type QueueType int
 
-func New(qt QueueType, cfg any) *Queue {
-	q := new(Queue)
+func New(qt QueueType, cfg any) (q *Queue, err error) {
+	rt := reflect.TypeOf(cfg)
+
 	switch qt {
 	case RabbitMQ:
-		fmt.Println("RabbitMQ")
+		if rt.Name() != "RabbitMQConfig" {
+			return nil, fmt.Errorf("invalid rabbitmq config type: %s", rt.Name())
+		}
 	default:
 		log.Fatal("type not supported")
 	}
-	return q
+	return
 }
 
 type QueueConnection interface {
