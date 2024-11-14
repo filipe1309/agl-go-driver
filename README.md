@@ -3,45 +3,61 @@
 # <p align="center">agl-go-driver</p>
 
 <p align="center">
-    <img src="https://img.shields.io/badge/Tools-Docker-informational?style=flat-square&logo=docker&color=2496ED" alt="Docker" />
-    <img src="https://img.shields.io/badge/Code-React-informational?style=flat-square&logo=react&color=61DAFB" alt="React" />
     <img src="https://img.shields.io/badge/Code-Go-informational?style=flat-square&logo=go&color=00ADD8" alt="Go" />
-    <img src="https://img.shields.io/badge/Code-PHP-informational?style=flat-square&logo=php&color=777bb4&logoColor=8892BF" alt="PHP" />
-    <img src="https://img.shields.io/badge/Code-Laravel-informational?style=flat-square&logo=laravel&color=FF2D20" alt="Laravel" />
-    <img src="https://img.shields.io/badge/Code-Lumen-informational?style=flat-square&logo=lumen&color=F4645F" alt="Lumen" />
-    <img src="https://img.shields.io/badge/Code-JavaScript-informational?style=flat-square&logo=javascript&color=F7DF1E" alt="JavaScript" />
-    <img src="https://img.shields.io/badge/Code-NodeJS-informational?style=flat-square&logo=node.js&color=339933" alt="NodeJS" />
-    <img src="https://img.shields.io/badge/Tools-MySQL-informational?style=flat-square&logo=mysql&color=4479A1&logoColor=2496ED" alt="MySQL" />
-    <img src="https://img.shields.io/badge/Tools-SQLServer-informational?style=flat-square&logo=microsoft-sql-server&color=CC2927&logoColor=CC2927" alt="SQLServer" />
-    <img src="https://img.shields.io/badge/php-8.0-green" alt="PHP"/>
-    <img src="https://img.shields.io/badge/lumen-8.0-orange" alt="Lumen"/>
-    <img src="https://img.shields.io/badge/nodejs-15.0-green" alt="NodeJS"/>
 </p>
 
 ## 💬 About
 
-This project was developed following {{ COURSE_SOURCE }}'s "[{{ COURSE_NAME }}]({{ COURSE_LINK }})" {{ COURSE_TYPE }}.
+This project was developed following Aprenda Golang's "[Imersão Backend](https://aprendagolang.com.br/courses/imersao-backend)" course.
 
 Notes taken during the course are in the [notes](notes.md) file.
+Architecture:
+
+## :art: Architecture
+
+```mermaid
+  C4Container
+    title Personal Go Drive
+    Person(customerA, "Customer A", "A customer of the drive API")
+
+    Enterprise_Boundary(b0, "System") {  
+      
+      Container(web_interface, "Web Application", "Interface that allows consumers to access Drive API via Web")
+      
+      Container(api, "API", "Allows customers upload/download files from Drive")
+
+      Container(cli_interface, "CLI", "Interface that allows consumers to access Drive API via terminal")
+
+      Container(worker, "Worker", "Compress files")
+      
+      ContainerDb(db, "Storage", "Stores the links of the uploaded files")
+      
+      ContainerQueue(queue, "Queue")
+    }
+
+    System(bucket_raw, "Bucket Raw", "Save raw files")
+    System(bucket_compress, "Bucket Compress", "Save compress files")
+
+    BiRel(customerA, web_interface, "HTTP")
+    BiRel(customerA, cli_interface, "Terminal")
+    Rel_D(cli_interface, api, "Save/Get link")
+    Rel_D(web_interface, api, "Save/Get link")
+    Rel_D(api, db, "Save/Get link")
+    Rel_D(api, queue, "Save/Get link")
+    Rel_D(api, bucket_raw, "Save/Get link")
+    Rel_D(queue, worker, "Get raw files")
+    Rel_D(worker, bucket_compress, "Save compressed files")
+```
 
 ## :computer: Technologies
 
-- [PHP](https://www.php.net/)
 - [Go](https://golang.org/)
-- [Node.js](https://nodejs.org/en/)
-- [Nginx](https://www.nginx.com/)
-- [MySQL](https://www.mysql.com/)
-- [Node MySQL2](https://www.npmjs.com/package/mysql2)
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [Dockerize](https://github.com/jwilder/dockerize)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## :scroll: Requirements
 
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
+- [Go](https://golang.org/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -99,7 +115,6 @@ Please make sure to update tests as appropriate. -->
 
 ## :clap: Acknowledgments
 
-- [AlgoExpert](https://www.algoexpert.io/)
 - [ShubcoGen Template™](https://github.com/filipe1309/shubcogen-template)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -107,7 +122,7 @@ Please make sure to update tests as appropriate. -->
 ---
 
 <p align="center">
-    Done with&nbsp;&nbsp;♥️&nbsp;&nbsp;by <a style="font-weight: bold" href="https://github.com/agl-go-driver/">filipe1309</a> 🖖
+    Done with&nbsp;&nbsp;♥️&nbsp;&nbsp;by <a style="font-weight: bold" href="https://github.com/filipe1309/">filipe1309</a> 🖖
 </p>
 
 ---
