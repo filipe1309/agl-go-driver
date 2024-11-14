@@ -21,12 +21,8 @@ func New(bt BucketType, cfg any) (b *Bucket, err error) {
 		if rt.Name() != "AWSS3Config" {
 			return nil, fmt.Errorf("invalid aws s3 config type: %s", rt.Name())
 		}
-		// TODO: Implement the newAWSS3Connection function
-		// conn, err := newAWSS3Connection(cfg.(AWSS3Config))
-		// if err != nil {
-		// 	return nil, err
-		// }
-		// b.provider = conn
+		
+		b.provider = newAWSS3Session(cfg.(AWSS3Config))
 	default:
 		return nil, fmt.Errorf("type not supported")
 	}

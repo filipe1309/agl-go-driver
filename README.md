@@ -146,6 +146,10 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate. -->
 
+## :pin: Roadmap
+- [ ] replace `aws-sdk-go` with `aws-sdk-go-v2`
+
+license:
 ## :memo: License
 
 [MIT](https://choosealicense.com/licenses/mit/)
