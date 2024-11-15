@@ -8,8 +8,10 @@ import (
 )
 
 var (
-	ErrPasswordEmpty = errors.New("password can't be empty")
-	ErrPasswordTooShort = errors.New("password is too short, minimum 6 characters")
+	ErrPasswordEmpty    = errors.New("password is required")
+	ErrPasswordTooShort = errors.New("password must be at least 6 characters long")
+	ErrNameEmpty        = errors.New("name is required")
+	ErrLoginEmpty       = errors.New("login is required")
 )
 
 func New(name, login, password string) (*User, error) {
@@ -21,6 +23,11 @@ func New(name, login, password string) (*User, error) {
 		UpdatedAt: now,
 	}
 	err := user.SetPassword(password)
+	if err != nil {
+		return nil, err
+	}
+
+	err = user.Validate()
 	if err != nil {
 		return nil, err
 	}
@@ -49,6 +56,23 @@ func (u *User) SetPassword(password string) error {
 	}
 
 	u.Password = fmt.Sprintf("%x", md5.Sum([]byte(password)))
+
+	return nil
+}
+
+func (u *User) Validate() error {
+	if u.Name == "" {
+		return ErrNameEmpty
+	}
+
+	if u.Login == "" {
+		return ErrLoginEmpty
+	}
+
+	blankPassword := fmt.Sprintf("%x", md5.Sum([]byte("")))
+	if u.Password == blankPassword {
+		return ErrPasswordEmpty
+	}
 
 	return nil
 }
