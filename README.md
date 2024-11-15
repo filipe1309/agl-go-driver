@@ -148,7 +148,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate. -->
 
-## :pin: Roadmap
+## :vertical_traffic_light: Roadmap
 - [ ] replace `aws-sdk-go` with `aws-sdk-go-v2`
 
 license:
