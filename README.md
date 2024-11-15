@@ -8,10 +8,11 @@
 
 ## 💬 About
 
-This project was developed following Aprenda Golang's "[Imersão Backend](https://aprendagolang.com.br/courses/imersao-backend)" course.
+The project is a simple file storage API that allows users to upload and download files.
 
-Notes taken during the course are in the [notes](notes.md) file.
-Architecture:
+> [!NOTE]
+> This project was developed following Aprenda Golang's "[Imersão Backend](https://aprendagolang.com.br/courses/imersao-backend)" course.  
+> Notes taken during the course are in the [notes](notes.md) file.
 
 ## :art: Architecture
 
