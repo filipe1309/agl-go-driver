@@ -1,6 +1,7 @@
 package bucket
 
 import (
+	"bytes"
 	"io"
 	"os"
 
@@ -50,7 +51,13 @@ func (awsSession *awsSession) Download(src, dest string) (file *os.File, err err
 }
 
 func (awsSession *awsSession) Upload(file io.Reader, key string) error {
-	return nil
+	uploader := s3manager.NewUploader(awsSession.session)
+	_, err := uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String(awsSession.bucketUpload),
+		Key:    aws.String(key),
+		Body:   file,
+	})
+	return err
 }
 
 func (awsSession *awsSession) Delete(key string) error {
