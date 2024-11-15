@@ -11,13 +11,13 @@ import (
 )
 
 type AWSS3Config struct {
-	Config         aws.Config
+	Config         *aws.Config
 	BucketDownload string
 	BucketUpload   string
 }
 
 func newAWSS3Session(cfg AWSS3Config) *awsSession {
-	c, err := session.NewSession(&cfg.Config)
+	c, err := session.NewSession(cfg.Config)
 	if err != nil {
 		panic(err)
 	}
