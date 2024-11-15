@@ -151,7 +151,6 @@ Please make sure to update tests as appropriate. -->
 ## :vertical_traffic_light: Roadmap
 - [ ] replace `aws-sdk-go` with `aws-sdk-go-v2`
 
-license:
 ## :memo: License
 
 [MIT](https://choosealicense.com/licenses/mit/)
