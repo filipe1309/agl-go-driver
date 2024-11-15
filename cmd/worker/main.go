@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"time"
 
@@ -12,7 +13,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/filipe1309/agl-go-driver/internal/bucket"
 	"github.com/filipe1309/agl-go-driver/internal/queue"
-	"github.com/rs/zerolog/log"
 )
 
 func main() {
