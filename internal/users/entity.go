@@ -34,14 +34,14 @@ func New(name, login, password string) (*User, error) {
 }
 
 type User struct {
-	ID        int
-	Name      string
-	Login     string
-	Password  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	LastLogin time.Time
-	Deleted   bool
+	ID        int64     `json:"id"`
+	Name      string    `json:"name"`
+	Login     string    `json:"login"`
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	LastLogin time.Time `json:"last_login"`
+	Deleted   bool      `json:"-"`
 }
 
 func (u *User) SetPassword(password string) error {
