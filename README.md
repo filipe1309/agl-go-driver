@@ -11,15 +11,10 @@
 The project is a simple file storage API that allows users to upload and download files.
 
 > [!NOTE]
-> This project was developed following Aprenda Golang's "[Imersão Backend](https://aprendagolang.com.br/courses/imersao-backend)" course.  
-> Notes taken during the course are in the [notes](notes.md) file.
+> 1. This project was developed following Aprenda Golang's "[Imersão Backend](https://aprendagolang.com.br/courses/imersao-backend)" course.  
+> 2. Notes taken during the course are in the [notes](notes.md) file.
 
 ## :art: Architecture
-
-> [!NOTE]
-> 1. The following diagram was generated using [Mermaid](https://mermaid-js.github.io/mermaid/).  
-> 2. It is a C4 model diagram at the container level, see more at [C4 Model](https://c4model.com/).
-
 
 ```mermaid
   C4Container
@@ -54,6 +49,10 @@ The project is a simple file storage API that allows users to upload and downloa
     Rel_D(queue, worker, "Get raw files")
     Rel_D(worker, bucket_compress, "Save compressed files")
 ```
+
+> [!NOTE]
+> 1. The following diagram was generated using [Mermaid](https://mermaid-js.github.io/mermaid/).  
+> 2. It is a C4 model diagram at the container level, see more at [C4 Model](https://c4model.com/).
 
 ## :card_file_box: Database
 
