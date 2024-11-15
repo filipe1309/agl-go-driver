@@ -12,11 +12,13 @@ var (
 	ErrTypeEmpty = errors.New("type is required")
 )
 
-func New(name, path string, folder_id, owner_id int64) (*File, error) {
+func New(owner_id int64, name, fileType, path string) (*File, error) {
 	file := File{
-		Name:     name,
-		FolderID: folder_id,
 		OwnerID:  owner_id,
+		Name:     name,
+		Type:     fileType,
+		Path: 	 path,
+		UpdatedAt: time.Now(),
 	}
 
 	err := file.Validate()
