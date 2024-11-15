@@ -13,7 +13,7 @@ type Handler struct {
 func SetRoutes(router chi.Router, db *sql.DB) {
 	h := Handler{db: db}
 
-	// router.Get("/users", h.List)
+	router.Get("/users", h.List)
 	router.Post("/users", h.Create)
 	router.Get("/users/{id}", h.GetByID)
 	router.Put("/users/{id}", h.Update)
