@@ -17,5 +17,5 @@ func SetRoutes(router chi.Router, db *sql.DB) {
 	router.Post("/users", h.Create)
 	// router.Get("/users/{id}", h.Get)
 	router.Put("/users/{id}", h.Update)
-	// router.Delete("/users/{id}", h.Delete)
+	router.Delete("/users/{id}", h.SoftDelete)
 }
