@@ -98,6 +98,8 @@ Architecture:
 ## :computer: Technologies
 
 - [Go](https://golang.org/)
+- [AWS SDK Go](https://aws.amazon.com/sdk-for-go/)
+- [Chi](https://go-chi.io/#/)
 - [RabbitMQ](https://www.rabbitmq.com/)
 - [Docker](https://www.docker.com/)
 
