@@ -1,7 +1,6 @@
 package bucket
 
 import (
-	"bytes"
 	"io"
 	"os"
 
@@ -61,5 +60,18 @@ func (awsSession *awsSession) Upload(file io.Reader, key string) error {
 }
 
 func (awsSession *awsSession) Delete(key string) error {
-	return nil
+	svc := s3.New(awsSession.session)
+	_, err := svc.DeleteObject(&s3.DeleteObjectInput{
+		Bucket: aws.String(awsSession.bucketUpload),
+		Key:    aws.String(key),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return svc.WaitUntilObjectNotExists(&s3.HeadObjectInput{
+		Bucket: aws.String(awsSession.bucketUpload),
+		Key:    aws.String(key),
+	})
 }
