@@ -28,8 +28,20 @@ $ psql -h docker.for.mac.host.internal -U postgres
 > \dt
 ```
 
-## Worker
+# Worker
 
 ```bash
 go mod tidy
+```
+
+# API
+
+## Testing
+
+```bash
+go get github.com/DATA-DOG/go-sqlmock
+```
+
+```bash
+go test ./internal/users/... -v
 ```

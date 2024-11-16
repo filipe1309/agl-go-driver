@@ -99,6 +99,8 @@ The project is a simple file storage API that allows users to upload and downloa
 
 - [Go](https://golang.org/)
 - [AWS SDK Go](https://aws.amazon.com/sdk-for-go/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Data Dog - SQLMock](https://github.com/DATA-DOG/go-sqlmock)
 - [Chi](https://go-chi.io/#/)
 - [RabbitMQ](https://www.rabbitmq.com/)
 - [Docker](https://www.docker.com/)
