@@ -28,11 +28,11 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func Read(db *sql.DB, id int64) (*User, error) {
-	stmt := `SELECT id, name, login, created_at, updated_at, last_login FROM users WHERE id = $1`
+	stmt := `SELECT * FROM users WHERE id = $1`
 	
 	var user User
 	row := db.QueryRow(stmt, id)
-	err := row.Scan(&user.ID, &user.Name, &user.Login, &user.CreatedAt, &user.UpdatedAt, &user.LastLogin)
+	err := row.Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.CreatedAt, &user.UpdatedAt, &user.LastLogin, &user.Deleted)
 	if err != nil {
 		return nil, err
 	}
