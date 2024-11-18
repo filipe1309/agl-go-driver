@@ -50,7 +50,7 @@ func ReadFolder(db *sql.DB, id int64) (*Folder, error) {
 }
 
 func readSubFolder(db *sql.DB, id int64) ([]Folder, error) {
-	stmt := `SELECT * FROM folders WHERE parent_id = $1 AND deleted = false`
+	stmt := `SELECT * FROM folders WHERE parent_id = $1 AND deleted = FALSE`
 
 	rows, err := db.Query(stmt, id)
 	if err != nil {

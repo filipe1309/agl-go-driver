@@ -22,7 +22,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func readRootSubFolder(db *sql.DB) ([]Folder, error) {
-	stmt := `SELECT * FROM folders WHERE parent_id IS NULL AND deleted = false`
+	stmt := `SELECT * FROM folders WHERE parent_id IS NULL AND deleted = FALSE`
 
 	rows, err := db.Query(stmt)
 	if err != nil {
