@@ -12,9 +12,13 @@ var (
 func New(name string, parent_id int64) (*Folder, error) {
 	folder := Folder{
 		Name:      name,
-		ParentID:  parent_id,
 		UpdatedAt: time.Now(),
 	}
+
+	if parent_id > 0 {
+		folder.ParentID = parent_id
+	}
+
 	err := folder.Validate()
 	if err != nil {
 		return nil, err
