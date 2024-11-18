@@ -20,7 +20,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func ReadAll(db *sql.DB) ([]User, error) {
-	stmt := `SELECT id, name, login, created_at, updated_at, last_login FROM users WHERE deleted = false`
+	stmt := `SELECT * FROM users WHERE deleted = FALSE`
 
 	rows, err := db.Query(stmt)
 	if err != nil {
@@ -31,7 +31,7 @@ func ReadAll(db *sql.DB) ([]User, error) {
 	users := make([]User, 0)
 	for rows.Next() {
 		var user User
-		err := rows.Scan(&user.ID, &user.Name, &user.Login, &user.CreatedAt, &user.UpdatedAt, &user.LastLogin)
+		err := rows.Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.CreatedAt, &user.UpdatedAt, &user.LastLogin, &user.Deleted)
 		if err != nil {
 			log.Println(err)
 			continue
