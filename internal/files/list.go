@@ -30,7 +30,7 @@ func ReadAll(db *sql.DB, folder_id int64) ([]File, error) {
 }
 
 func ReadAllRoot(db *sql.DB) ([]File, error) {
-	stmt := `SELECT * FROM files WHERE folder_id IS NULL AND deleted = false`
+	stmt := `SELECT * FROM files WHERE folder_id IS NULL AND deleted = FALSE`
 
 	rows, err := db.Query(stmt)
 	if err != nil {
