@@ -6,7 +6,7 @@ import (
 )
 
 func ReadAll(db *sql.DB, folder_id int64) ([]File, error) {
-	stmt := `SELECT * FROM files WHERE folder_id = $1 AND deleted = false`
+	stmt := `SELECT * FROM files WHERE folder_id = $1 AND deleted = FALSE`
 
 	rows, err := db.Query(stmt, folder_id)
 	if err != nil {
