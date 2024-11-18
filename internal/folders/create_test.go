@@ -19,8 +19,8 @@ func TestInsert(t *testing.T) {
 		t.Error(err)
 	}
 
-	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO folders (name, parent_id, updated_at) VALUES ($1, $2, $3)`)).
-		WithArgs("Test name", 0, sqlmock.AnyArg()).
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO folders (parent_id, name, updated_at) VALUES ($1, $2, $3)`)).
+		WithArgs(nil, "Test name", sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	_, err = Insert(db, folder)

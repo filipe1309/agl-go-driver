@@ -13,7 +13,6 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	err = folder.Validate()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -33,9 +32,9 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func Insert(db *sql.DB, folder *Folder) (int64, error) {
-	stmt := `INSERT INTO folders (name, parent_id, updated_at) VALUES ($1, $2, $3)`
+	stmt := `INSERT INTO folders (parent_id, name, updated_at) VALUES ($1, $2, $3)`
 
-	result, err := db.Exec(stmt, folder.Name, folder.ParentID, folder.UpdatedAt)
+	result, err := db.Exec(stmt, folder.ParentID, folder.Name, folder.UpdatedAt)
 	if err != nil {
 		return -1, err
 	}

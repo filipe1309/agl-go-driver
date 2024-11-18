@@ -45,3 +45,5 @@ go get github.com/DATA-DOG/go-sqlmock
 ```bash
 go test ./internal/users/... -v
 ```
+
+sql.NullInt64
