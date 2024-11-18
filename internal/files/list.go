@@ -17,7 +17,7 @@ func ReadAll(db *sql.DB, folder_id int64) ([]File, error) {
 	files := make([]File, 0)
 	for rows.Next() {
 		var file File
-		err := rows.Scan(&file.ID, &file.ID, &file.FolderID, &file.OwnerID, &file.Name, &file.Type, &file.Path, &file.CreatedAt, &file.UpdatedAt, &file.Deleted)
+		err := rows.Scan(&file.ID, &file.FolderID, &file.OwnerID, &file.Name, &file.Type, &file.Path, &file.CreatedAt, &file.UpdatedAt, &file.Deleted)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -41,7 +41,7 @@ func ReadAllRoot(db *sql.DB) ([]File, error) {
 	files := make([]File, 0)
 	for rows.Next() {
 		var file File
-		err := rows.Scan(&file.ID, &file.ID, &file.FolderID, &file.OwnerID, &file.Name, &file.Type, &file.Path, &file.CreatedAt, &file.UpdatedAt, &file.Deleted)
+		err := rows.Scan(&file.ID, &file.FolderID, &file.OwnerID, &file.Name, &file.Type, &file.Path, &file.CreatedAt, &file.UpdatedAt, &file.Deleted)
 		if err != nil {
 			log.Println(err)
 			continue
