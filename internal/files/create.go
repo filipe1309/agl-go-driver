@@ -29,6 +29,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO: replace hardcoded ownerID with session user
 	ownerID := 1
 	fileEntity, err := New(int64(ownerID), fileHeader.Filename, fileHeader.Header.Get("Content-Type"), path)
 	if err != nil {
@@ -75,6 +76,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(fileEntity)
 }
