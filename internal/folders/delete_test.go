@@ -1,9 +1,7 @@
 package folders
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -23,17 +21,6 @@ func TestSoftDelete(t *testing.T) {
 	defer db.Close()
 
 	h := handler{db}
-
-	folder := &Folder{
-		ID:   1,
-		Name: "Test folder 1",
-	}
-
-	var b bytes.Buffer
-	err = json.NewEncoder(&b).Encode(folder)
-	if err != nil {
-		t.Error(err)
-	}
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodDelete, "/folders/{id}", nil)
