@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
+func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	user := new(User)
 	err := json.NewDecoder(r.Body).Decode(user)
 	if err != nil {
@@ -34,6 +34,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	user.ID = id
 
+	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
 }

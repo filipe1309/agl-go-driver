@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
+func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 	user := new(User)
 	err := json.NewDecoder(r.Body).Decode(user)
 	if err != nil {

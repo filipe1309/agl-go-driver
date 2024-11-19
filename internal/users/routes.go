@@ -6,12 +6,12 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-type Handler struct {
+type handler struct {
 	db *sql.DB
 }
 
 func SetRoutes(router chi.Router, db *sql.DB) {
-	h := Handler{db: db}
+	h := handler{db: db}
 
 	router.Get("/users", h.List)
 	router.Post("/users", h.Create)

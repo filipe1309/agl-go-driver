@@ -9,7 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
+func (h *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -29,7 +29,7 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 
 func Read(db *sql.DB, id int64) (*User, error) {
 	stmt := `SELECT * FROM users WHERE id = $1`
-	
+
 	var user User
 	row := db.QueryRow(stmt, id)
 	err := row.Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.CreatedAt, &user.UpdatedAt, &user.LastLogin, &user.Deleted)

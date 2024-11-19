@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
+func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	users, err := ReadAll(h.db)
 	if err != nil {
 		// TODO: Check if the error is sql.ErrNoRows and return 404

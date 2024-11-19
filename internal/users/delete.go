@@ -9,7 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (h *Handler) SoftDelete(w http.ResponseWriter, r *http.Request) {
+func (h *handler) SoftDelete(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
