@@ -17,7 +17,7 @@ func (h *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	folder, err := ReadFolderDB(h.db, int64(id))
+	folder, err := ReadDB(h.db, int64(id))
 	if err != nil {
 		// TODO: Check if the error is sql.ErrNoRows and return 404
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -36,7 +36,7 @@ func (h *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(folderContent)
 }
 
-func ReadFolderDB(db *sql.DB, id int64) (*Folder, error) {
+func ReadDB(db *sql.DB, id int64) (*Folder, error) {
 	stmt := `SELECT * FROM folders WHERE id = $1`
 
 	var folder Folder

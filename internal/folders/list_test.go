@@ -23,17 +23,19 @@ func TestList(t *testing.T) {
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/users", nil)
 
-	rows := sqlmock.NewRows([]string{"id", "parent_id", "name", "created_at", "updated_at", "deleted"}).
+	// readRootSubFolderDB
+	foldersRows := sqlmock.NewRows([]string{"id", "parent_id", "name", "created_at", "updated_at", "deleted"}).
 		AddRow(1, nil, "Test folder 1", time.Now(), time.Now(), false).
 		AddRow(5, nil, "Test folder 1", time.Now(), time.Now(), false)
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM folders WHERE parent_id IS NULL AND deleted = FALSE`)).
-		WillReturnRows(rows)
+		WillReturnRows(foldersRows)
 
-	rows2 := sqlmock.NewRows([]string{"id", "folder_id", "owner_id", "name", "type", "path", "created_at", "updated_at", "deleted"}).
+	// files.ReadAllRootDB
+	filesRow := sqlmock.NewRows([]string{"id", "folder_id", "owner_id", "name", "type", "path", "created_at", "updated_at", "deleted"}).
 		AddRow(1, 1, 1, "Test name", "testtype", "testpath", time.Now(), time.Now(), false).
 		AddRow(2, 1, 1, "Test name 2", "testtype", "testpath", time.Now(), time.Now(), true)
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM files WHERE folder_id IS NULL AND deleted = FALSE`)).
-		WillReturnRows(rows2)
+		WillReturnRows(filesRow)
 
 	h.List(rr, req)
 
