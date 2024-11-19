@@ -5,12 +5,12 @@ import (
 	"log"
 )
 
-func ReadAll(db *sql.DB, folder_id int64) ([]File, error) {
+func ReadAllDB(db *sql.DB, folder_id int64) ([]File, error) {
 	stmt := `SELECT * FROM files WHERE folder_id = $1 AND deleted = FALSE`
 	return selectAllFiles(db, stmt)
 }
 
-func ReadAllRoot(db *sql.DB) ([]File, error) {
+func ReadAllRootDB(db *sql.DB) ([]File, error) {
 	stmt := `SELECT * FROM files WHERE folder_id IS NULL AND deleted = FALSE`
 	return selectAllFiles(db, stmt)
 }

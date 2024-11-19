@@ -21,7 +21,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(folderContent)
 }
 
-func readRootSubFolder(db *sql.DB) ([]Folder, error) {
+func readRootSubFolderDB(db *sql.DB) ([]Folder, error) {
 	stmt := `SELECT * FROM folders WHERE parent_id IS NULL AND deleted = FALSE`
 
 	rows, err := db.Query(stmt)
@@ -44,7 +44,7 @@ func readRootSubFolder(db *sql.DB) ([]Folder, error) {
 }
 
 func ReadRootFolderContent(db *sql.DB) ([]FolderResource, error) {
-	subFolders, err := readRootSubFolder(db)
+	subFolders, err := readRootSubFolderDB(db)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func ReadRootFolderContent(db *sql.DB) ([]FolderResource, error) {
 		})
 	}
 
-	folderFiles, err := files.ReadAllRoot(db)
+	folderFiles, err := files.ReadAllRootDB(db)
 	if err != nil {
 		return nil, err
 	}

@@ -23,7 +23,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		folder.ParentID.Valid = false
 	}
 
-	id, err := Insert(h.db, folder)
+	id, err := InsertDB(h.db, folder)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -36,7 +36,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(folder)
 }
 
-func Insert(db *sql.DB, folder *Folder) (int64, error) {
+func InsertDB(db *sql.DB, folder *Folder) (int64, error) {
 	stmt := `INSERT INTO folders (parent_id, name, updated_at) VALUES ($1, $2, $3)`
 
 	var parentID any

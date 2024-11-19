@@ -41,7 +41,7 @@ func TestList(t *testing.T) {
 	}
 }
 
-func TestReadAll(t *testing.T) {
+func TestReadAllDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -54,7 +54,7 @@ func TestReadAll(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE deleted = FALSE`)).
 		WillReturnRows(rows)
 
-	_, err = ReadAll(db)
+	_, err = ReadAllDB(db)
 	if err != nil {
 		t.Error(err)
 	}

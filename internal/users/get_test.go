@@ -55,7 +55,7 @@ func TestGetByID(t *testing.T) {
 	}
 }
 
-func TestRead(t *testing.T) {
+func TestReadDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -68,7 +68,7 @@ func TestRead(t *testing.T) {
 		WithArgs(1).
 		WillReturnRows(rows)
 
-	_, err = Read(db, 1)
+	_, err = ReadDB(db, 1)
 	if err != nil {
 		t.Error(err)
 	}

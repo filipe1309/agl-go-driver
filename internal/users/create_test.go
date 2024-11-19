@@ -36,7 +36,7 @@ func TestCreate(t *testing.T) {
 	mock.ExpectExec(`INSERT INTO users (name, login, password, updated_at)*`).
 		WithArgs(user.Name, user.Login, sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	
+
 	h.Create(rr, req)
 
 	if rr.Code != http.StatusCreated {
@@ -45,7 +45,7 @@ func TestCreate(t *testing.T) {
 	}
 }
 
-func TestInsert(t *testing.T) {
+func TestInsertDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -61,7 +61,7 @@ func TestInsert(t *testing.T) {
 		WithArgs("Test name", "testlogin", user.Password, user.UpdatedAt).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	_, err = Insert(db, user)
+	_, err = InsertDB(db, user)
 	if err != nil {
 		t.Error(err)
 	}

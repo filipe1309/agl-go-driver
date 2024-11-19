@@ -16,7 +16,7 @@ func (h *handler) SoftDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = SoftDelete(h.db, int64(id))
+	err = SoftDeleteDB(h.db, int64(id))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -25,7 +25,7 @@ func (h *handler) SoftDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func SoftDelete(db *sql.DB, id int64) error {
+func SoftDeleteDB(db *sql.DB, id int64) error {
 	stmt := `UPDATE files SET updated_at = $1, deleted = TRUE WHERE id = $2`
 
 	_, err := db.Exec(stmt, time.Now(), id)

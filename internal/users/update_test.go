@@ -15,7 +15,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func TestUpdateAPI(t *testing.T) {
+func TestUpdate(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -59,7 +59,7 @@ func TestUpdateAPI(t *testing.T) {
 	}
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -70,7 +70,7 @@ func TestUpdate(t *testing.T) {
 		WithArgs("Test name", sqlmock.AnyArg(), 1).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	_, err = Update(db, 1, &User{
+	_, err = UpdateDB(db, 1, &User{
 		Name: "Test name",
 	})
 	if err != nil {

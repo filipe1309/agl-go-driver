@@ -47,7 +47,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		fileEntity.FolderID = common.NullInt64{Int64: int64(folderIDInt), Valid: true}
 	}
 
-	id, err := Insert(h.db, fileEntity)
+	id, err := InsertDB(h.db, fileEntity)
 	if err != nil {
 		// h.bucket.Delete(path)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -79,7 +79,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(fileEntity)
 }
 
-func Insert(db *sql.DB, file *File) (int64, error) {
+func InsertDB(db *sql.DB, file *File) (int64, error) {
 	stmt := `INSERT INTO files (folder_id, owner_id, name, type, path, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`
 
 	var folderID any

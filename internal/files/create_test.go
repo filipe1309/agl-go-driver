@@ -8,7 +8,7 @@ import (
 	"github.com/filipe1309/agl-go-driver/internal/common"
 )
 
-func TestInsertRoot(t *testing.T) {
+func TestInsertRootDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -24,7 +24,7 @@ func TestInsertRoot(t *testing.T) {
 		WithArgs(nil, 1, "Test name", "webp", "path", sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	_, err = Insert(db, file)
+	_, err = InsertDB(db, file)
 	if err != nil {
 		t.Error(err)
 	}
@@ -34,7 +34,7 @@ func TestInsertRoot(t *testing.T) {
 	}
 }
 
-func TestInsertWithFolder(t *testing.T) {
+func TestInsertWithFolderDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -51,7 +51,7 @@ func TestInsertWithFolder(t *testing.T) {
 		WithArgs(int64(2), 1, "Test name", "webp", "path", sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	_, err = Insert(db, file)
+	_, err = InsertDB(db, file)
 	if err != nil {
 		t.Error(err)
 	}

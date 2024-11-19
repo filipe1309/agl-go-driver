@@ -8,7 +8,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
-func TestReadRootSubFolder(t *testing.T) {
+func TestReadRootSubFolderDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -21,7 +21,7 @@ func TestReadRootSubFolder(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM folders WHERE parent_id IS NULL AND deleted = FALSE`)).
 		WillReturnRows(rows)
 
-	_, err = readRootSubFolder(db)
+	_, err = readRootSubFolderDB(db)
 	if err != nil {
 		t.Error(err)
 	}

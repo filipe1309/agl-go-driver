@@ -8,7 +8,7 @@ import (
 )
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	users, err := ReadAll(h.db)
+	users, err := ReadAllDB(h.db)
 	if err != nil {
 		// TODO: Check if the error is sql.ErrNoRows and return 404
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -19,7 +19,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
-func ReadAll(db *sql.DB) ([]User, error) {
+func ReadAllDB(db *sql.DB) ([]User, error) {
 	stmt := `SELECT * FROM users WHERE deleted = FALSE`
 
 	rows, err := db.Query(stmt)

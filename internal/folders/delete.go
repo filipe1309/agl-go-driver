@@ -25,7 +25,7 @@ func (h *handler) SoftDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = SoftDelete(h.db, int64(id))
+	err = SoftDeleteDB(h.db, int64(id))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -45,7 +45,7 @@ func deleteFolderContent(db *sql.DB, folderID int64) error {
 }
 
 func deleteSubFolders(db *sql.DB, folderID int64) error {
-	subFoldersList, err := readSubFolder(db, folderID)
+	subFoldersList, err := readSubFolderDB(db, folderID)
 	if err != nil {
 		return err
 	}
@@ -53,14 +53,14 @@ func deleteSubFolders(db *sql.DB, folderID int64) error {
 	removedFolders := make([]Folder, 0, len(subFoldersList))
 	for _, subFolder := range subFoldersList {
 		subFolder.Deleted = true
-		err = SoftDelete(db, subFolder.ID)
+		err = SoftDeleteDB(db, subFolder.ID)
 		if err != nil {
 			break
 		}
 		err = deleteFolderContent(db, subFolder.ID)
 		if err != nil {
 			// subFolder.Deleted = false
-			Update(db, subFolder.ID, &subFolder)
+			UpdateDB(db, subFolder.ID, &subFolder)
 			break
 		}
 
@@ -70,7 +70,7 @@ func deleteSubFolders(db *sql.DB, folderID int64) error {
 	if len(subFoldersList) != len(removedFolders) {
 		for _, subFolder := range removedFolders {
 			// subFolder.Deleted = false
-			_, _ = Update(db, subFolder.ID, &subFolder)
+			_, _ = UpdateDB(db, subFolder.ID, &subFolder)
 		}
 	}
 
@@ -78,7 +78,7 @@ func deleteSubFolders(db *sql.DB, folderID int64) error {
 }
 
 func deleteFiles(db *sql.DB, folderID int64) error {
-	filesList, err := files.ReadAll(db, folderID)
+	filesList, err := files.ReadAllDB(db, folderID)
 	if err != nil {
 		return err
 	}
@@ -86,7 +86,7 @@ func deleteFiles(db *sql.DB, folderID int64) error {
 	removedFiles := make([]files.File, len(filesList))
 	for _, file := range filesList {
 		file.Deleted = true
-		_, err = files.Update(db, file.ID, &file)
+		_, err = files.UpdateDB(db, file.ID, &file)
 		if err != nil {
 			break
 		}
@@ -96,7 +96,7 @@ func deleteFiles(db *sql.DB, folderID int64) error {
 	if len(filesList) != len(removedFiles) {
 		for _, file := range removedFiles {
 			file.Deleted = false
-			_, _ = files.Update(db, file.ID, &file)
+			_, _ = files.UpdateDB(db, file.ID, &file)
 		}
 
 		return err
@@ -105,7 +105,7 @@ func deleteFiles(db *sql.DB, folderID int64) error {
 	return nil
 }
 
-func SoftDelete(db *sql.DB, id int64) error {
+func SoftDeleteDB(db *sql.DB, id int64) error {
 	stmt := `UPDATE folders SET updated_at = $1, deleted = TRUE WHERE id = $2`
 
 	_, err := db.Exec(stmt, time.Now(), id)

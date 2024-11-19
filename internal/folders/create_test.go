@@ -47,7 +47,7 @@ func TestCreate(t *testing.T) {
 	}
 }
 
-func TestInsertRoot(t *testing.T) {
+func TestInsertRootDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -63,7 +63,7 @@ func TestInsertRoot(t *testing.T) {
 		WithArgs(nil, "Test name", sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	_, err = Insert(db, folder)
+	_, err = InsertDB(db, folder)
 	if err != nil {
 		t.Error(err)
 	}
@@ -73,7 +73,7 @@ func TestInsertRoot(t *testing.T) {
 	}
 }
 
-func TestInsertWithFolder(t *testing.T) {
+func TestInsertWithFolderDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -89,7 +89,7 @@ func TestInsertWithFolder(t *testing.T) {
 		WithArgs(1, "Test name", sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	_, err = Insert(db, folder)
+	_, err = InsertDB(db, folder)
 	if err != nil {
 		t.Error(err)
 	}

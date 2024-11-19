@@ -30,7 +30,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = Update(h.db, int64(id), folder)
+	_, err = UpdateDB(h.db, int64(id), folder)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -42,7 +42,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(folder)
 }
 
-func Update(db *sql.DB, id int64, folder *Folder) (int64, error) {
+func UpdateDB(db *sql.DB, id int64, folder *Folder) (int64, error) {
 	folder.UpdatedAt = time.Now()
 
 	stmt := `UPDATE folders SET name = $1, updated_at = $2 WHERE id = $3`

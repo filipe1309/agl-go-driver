@@ -29,13 +29,13 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = Update(h.db, int64(id), user)
+	_, err = UpdateDB(h.db, int64(id), user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	user, err = Read(h.db, int64(id))
+	user, err = ReadDB(h.db, int64(id))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -45,7 +45,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func Update(db *sql.DB, id int64, user *User) (int64, error) {
+func UpdateDB(db *sql.DB, id int64, user *User) (int64, error) {
 	user.UpdatedAt = time.Now()
 	stmt := `UPDATE users SET name = $1, updated_at = $2 WHERE id = $3`
 

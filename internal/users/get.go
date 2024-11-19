@@ -16,7 +16,7 @@ func (h *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := Read(h.db, int64(id))
+	user, err := ReadDB(h.db, int64(id))
 	if err != nil {
 		// TODO: Check if the error is sql.ErrNoRows and return 404
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -27,7 +27,7 @@ func (h *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func Read(db *sql.DB, id int64) (*User, error) {
+func ReadDB(db *sql.DB, id int64) (*User, error) {
 	stmt := `SELECT * FROM users WHERE id = $1`
 
 	var user User

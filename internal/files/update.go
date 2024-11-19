@@ -17,7 +17,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, err := Read(h.db, int64(id))
+	file, err := ReadDB(h.db, int64(id))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -35,7 +35,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = Update(h.db, int64(id), file)
+	_, err = UpdateDB(h.db, int64(id), file)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -45,7 +45,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(file)
 }
 
-func Update(db *sql.DB, id int64, file *File) (int64, error) {
+func UpdateDB(db *sql.DB, id int64, file *File) (int64, error) {
 	file.UpdatedAt = time.Now()
 
 	stmt := `UPDATE files SET name = $1, updated_at = $2, deleted = $3 WHERE id = $4`

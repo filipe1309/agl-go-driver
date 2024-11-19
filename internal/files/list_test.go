@@ -8,7 +8,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
-func TestReadAll(t *testing.T) {
+func TestReadAllDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -21,7 +21,7 @@ func TestReadAll(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM files WHERE folder_id = $1 AND deleted = FALSE`)).
 		WillReturnRows(rows)
 
-	_, err = ReadAll(db, 0)
+	_, err = ReadAllDB(db, 0)
 	if err != nil {
 		t.Error(err)
 	}
@@ -35,7 +35,7 @@ func TestReadAll(t *testing.T) {
 	}
 }
 
-func TestReadAllRoot(t *testing.T) {
+func TestReadAllRootDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -48,7 +48,7 @@ func TestReadAllRoot(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM files WHERE folder_id IS NULL AND deleted = FALSE`)).
 		WillReturnRows(rows)
 
-	_, err = ReadAllRoot(db)
+	_, err = ReadAllRootDB(db)
 	if err != nil {
 		t.Error(err)
 	}

@@ -17,7 +17,7 @@ func (h *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	folder, err := ReadFolder(h.db, int64(id))
+	folder, err := ReadFolderDB(h.db, int64(id))
 	if err != nil {
 		// TODO: Check if the error is sql.ErrNoRows and return 404
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -36,7 +36,7 @@ func (h *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(folderContent)
 }
 
-func ReadFolder(db *sql.DB, id int64) (*Folder, error) {
+func ReadFolderDB(db *sql.DB, id int64) (*Folder, error) {
 	stmt := `SELECT * FROM folders WHERE id = $1`
 
 	var folder Folder
@@ -49,7 +49,7 @@ func ReadFolder(db *sql.DB, id int64) (*Folder, error) {
 	return &folder, nil
 }
 
-func readSubFolder(db *sql.DB, id int64) ([]Folder, error) {
+func readSubFolderDB(db *sql.DB, id int64) ([]Folder, error) {
 	stmt := `SELECT * FROM folders WHERE parent_id = $1 AND deleted = FALSE`
 
 	rows, err := db.Query(stmt, id)
@@ -72,7 +72,7 @@ func readSubFolder(db *sql.DB, id int64) ([]Folder, error) {
 }
 
 func ReadFolderContent(db *sql.DB, folderID int64) ([]FolderResource, error) {
-	subFolders, err := readSubFolder(db, folderID)
+	subFolders, err := readSubFolderDB(db, folderID)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func ReadFolderContent(db *sql.DB, folderID int64) ([]FolderResource, error) {
 		})
 	}
 
-	folderFiles, err := files.ReadAll(db, folderID)
+	folderFiles, err := files.ReadAllDB(db, folderID)
 	if err != nil {
 		return nil, err
 	}

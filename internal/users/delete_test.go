@@ -57,7 +57,7 @@ func TestSoftDelete(t *testing.T) {
 	}
 }
 
-func TestDelete(t *testing.T) {
+func TestSoftDeleteDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -69,7 +69,7 @@ func TestDelete(t *testing.T) {
 		WithArgs(sqlmock.AnyArg(), 1).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	err = SoftDelete(db, 1)
+	err = SoftDeleteDB(db, 1)
 	if err != nil {
 		t.Error(err)
 	}

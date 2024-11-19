@@ -8,7 +8,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
-func TestReadFolder(t *testing.T) {
+func TestReadFolderDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -21,7 +21,7 @@ func TestReadFolder(t *testing.T) {
 		WithArgs(1).
 		WillReturnRows(rows)
 
-	_, err = ReadFolder(db, 1)
+	_, err = ReadFolderDB(db, 1)
 	if err != nil {
 		t.Error(err)
 	}
@@ -31,7 +31,7 @@ func TestReadFolder(t *testing.T) {
 	}
 }
 
-func TestReadSubFolder(t *testing.T) {
+func TestReadSubFolderDB(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Error(err)
@@ -45,7 +45,7 @@ func TestReadSubFolder(t *testing.T) {
 		WithArgs(1).
 		WillReturnRows(rows)
 
-	_, err = readSubFolder(db, 1)
+	_, err = readSubFolderDB(db, 1)
 	if err != nil {
 		t.Error(err)
 	}
