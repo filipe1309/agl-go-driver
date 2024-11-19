@@ -44,7 +44,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		fileEntity.FolderID = common.NullInt64{NullInt64: sql.NullInt64{Int64: int64(folderIDInt), Valid: true}}
+		fileEntity.FolderID = common.NullInt64{Int64: int64(folderIDInt), Valid: true}
 	}
 
 	id, err := Insert(h.db, fileEntity)
@@ -82,10 +82,16 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 func Insert(db *sql.DB, file *File) (int64, error) {
 	stmt := `INSERT INTO files (folder_id, owner_id, name, type, path, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`
 
-	result, err := db.Exec(stmt, file.FolderID, file.OwnerID, file.Name, file.Type, file.Path, file.UpdatedAt)
+	var folderID any
+	if file.FolderID.Valid {
+		folderID = file.FolderID.Int64
+	} else {
+		folderID = nil
+	}
+
+	result, err := db.Exec(stmt, folderID, file.OwnerID, file.Name, file.Type, file.Path, file.UpdatedAt)
 	if err != nil {
 		return -1, err
 	}
-
 	return result.LastInsertId()
 }
