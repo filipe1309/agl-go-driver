@@ -19,7 +19,7 @@ func New(name string, parent_id int64) (*Folder, error) {
 	}
 
 	if parent_id > 0 {
-		folder.ParentID = common.NullInt64{sql.NullInt64{Int64: parent_id, Valid: true}}
+		folder.ParentID = common.NullInt64{NullInt64: sql.NullInt64{Int64: parent_id, Valid: true}}
 	}
 
 	err := folder.Validate()
@@ -31,12 +31,12 @@ func New(name string, parent_id int64) (*Folder, error) {
 }
 
 type Folder struct {
-	ID        int64     `json:"id"`
+	ID        int64            `json:"id"`
 	ParentID  common.NullInt64 `json:"parent_id"`
-	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Deleted   bool      `json:"-"`
+	Name      string           `json:"name"`
+	CreatedAt time.Time        `json:"created_at"`
+	UpdatedAt time.Time        `json:"updated_at"`
+	Deleted   bool             `json:"-"`
 }
 
 func (f *Folder) Validate() error {
