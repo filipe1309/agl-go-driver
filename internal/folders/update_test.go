@@ -23,13 +23,13 @@ func TestUpdate(t *testing.T) {
 
 	h := handler{db}
 
-	user := &Folder{
+	folder := &Folder{
 		ID:   1,
 		Name: "Test folder 1",
 	}
 
 	var b bytes.Buffer
-	err = json.NewEncoder(&b).Encode(user)
+	err = json.NewEncoder(&b).Encode(folder)
 	if err != nil {
 		t.Error(err)
 	}
