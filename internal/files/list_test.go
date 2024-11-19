@@ -53,10 +53,6 @@ func TestReadAllRoot(t *testing.T) {
 		t.Error(err)
 	}
 
-	// if len(list) > 1 { // this doesn't work with sqlmock, because it doesn't filter the rows
-	// 	t.Error("Expected 1 row, got", len(list))
-	// }
-
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Error(err)
 	}
