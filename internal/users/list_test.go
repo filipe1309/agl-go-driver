@@ -1,7 +1,6 @@
 package users
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -33,7 +32,6 @@ func TestList(t *testing.T) {
 
 	if rr.Code != http.StatusOK {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, rr.Code)
-		fmt.Println(rr.Body.String())
 	}
 
 	if err := mock.ExpectationsWereMet(); err != nil {
