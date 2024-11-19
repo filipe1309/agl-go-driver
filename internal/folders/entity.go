@@ -1,7 +1,6 @@
 package folders
 
 import (
-	"database/sql"
 	"errors"
 	"time"
 
@@ -19,7 +18,7 @@ func New(name string, parent_id int64) (*Folder, error) {
 	}
 
 	if parent_id > 0 {
-		folder.ParentID = common.NullInt64{NullInt64: sql.NullInt64{Int64: parent_id, Valid: true}}
+		folder.ParentID = common.NullInt64{Int64: parent_id, Valid: true}
 	}
 
 	err := folder.Validate()
