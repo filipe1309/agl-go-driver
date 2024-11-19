@@ -26,7 +26,7 @@ func (h *handler) SoftDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func SoftDelete(db *sql.DB, id int64) error {
-	stmt := `UPDATE files SET updated_at = $1, deleted = true WHERE id = $2`
+	stmt := `UPDATE files SET updated_at = $1, deleted = TRUE WHERE id = $2`
 
 	_, err := db.Exec(stmt, time.Now(), id)
 	if err != nil {

@@ -6,6 +6,12 @@ import (
 	"reflect"
 )
 
+// type AnyTime struct{}
+// func (a AnyTime) Match(v driver.Value) bool {
+// 	_, ok := v.(time.Time)
+// 	return ok
+// }
+
 // NullInt64 is an alias for sql.NullInt64 data type
 type NullInt64 sql.NullInt64
 

@@ -7,12 +7,6 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
-// type AnyTime struct{}
-// func (a AnyTime) Match(v driver.Value) bool {
-// 	_, ok := v.(time.Time)
-// 	return ok
-// }
-
 func TestDelete(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -20,7 +14,7 @@ func TestDelete(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE files SET updated_at = $1, deleted = true WHERE id = $2`)).
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE files SET updated_at = $1, deleted = TRUE WHERE id = $2`)).
 		// WithArgs(AnyTime{}, 1).
 		WithArgs(sqlmock.AnyArg(), 1).
 		WillReturnResult(sqlmock.NewResult(1, 1))
