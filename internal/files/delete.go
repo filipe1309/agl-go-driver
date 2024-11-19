@@ -22,6 +22,7 @@ func (h *handler) SoftDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusNoContent)
 	w.Header().Set("Content-Type", "application/json")
 }
 
