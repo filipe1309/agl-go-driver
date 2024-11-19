@@ -41,7 +41,7 @@ func TestUpdateAPI(t *testing.T) {
 	ctx.URLParams.Add("id", "1")
 	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $3 WHERE id = $4`)).
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $2 WHERE id = $3`)).
 		WithArgs("Test user 1", sqlmock.AnyArg(), 1).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -66,7 +66,7 @@ func TestUpdate(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $3 WHERE id = $4`)).
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $2 WHERE id = $3`)).
 		WithArgs("Test name", sqlmock.AnyArg(), 1).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
