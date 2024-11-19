@@ -29,9 +29,8 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = file.Validate()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if file.Name == "" {
+		http.Error(w, "name is required", http.StatusBadRequest)
 		return
 	}
 
