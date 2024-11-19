@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/filipe1309/agl-go-driver/internal/common"
 	"github.com/filipe1309/agl-go-driver/internal/queue"
 )
 
@@ -29,7 +30,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ownerID := 1
-	entity, err := New(int64(ownerID), fileHeader.Filename, fileHeader.Header.Get("Content-Type"), path)
+	fileEntity, err := New(int64(ownerID), fileHeader.Filename, fileHeader.Header.Get("Content-Type"), path)
 	if err != nil {
 		h.bucket.Delete(path)
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -43,17 +44,17 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		entity.FolderID = int64(folderIDInt)
+		fileEntity.FolderID = common.NullInt64{NullInt64: sql.NullInt64{Int64: int64(folderIDInt), Valid: true}}
 	}
 
-	id, err := Insert(h.db, entity)
+	id, err := Insert(h.db, fileEntity)
 	if err != nil {
 		// h.bucket.Delete(path)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	entity.ID = id
+	fileEntity.ID = id
 
 	dto := queue.QueueDTO{
 		Filename: fileHeader.Filename,
@@ -75,7 +76,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(entity)
+	json.NewEncoder(w).Encode(fileEntity)
 }
 
 func Insert(db *sql.DB, file *File) (int64, error) {
