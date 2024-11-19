@@ -31,6 +31,7 @@ func (h *handler) SoftDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusNoContent)
 	w.Header().Set("Content-Type", "application/json")
 }
 
@@ -105,7 +106,7 @@ func deleteFiles(db *sql.DB, folderID int64) error {
 }
 
 func SoftDelete(db *sql.DB, id int64) error {
-	stmt := `UPDATE folders SET updated_at = $1, deleted = true WHERE id = $2`
+	stmt := `UPDATE folders SET updated_at = $1, deleted = TRUE WHERE id = $2`
 
 	_, err := db.Exec(stmt, time.Now(), id)
 	if err != nil {
