@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/filipe1309/agl-go-driver/internal/bucket"
 	"github.com/filipe1309/agl-go-driver/internal/common"
 )
 
@@ -22,11 +23,16 @@ func TestCreate(t *testing.T) {
 	}
 	defer db.Close()
 
-	h := handler{db, nil, nil}
+	mockBucket, err := bucket.New(bucket.MockBucketProvider, nil)
+	if err != nil {
+		t.Error(err)
+	}
 
-	b := new(bytes.Buffer)
+	h := handler{db, mockBucket, nil}
 
-	mw := multipart.NewWriter(b)
+	body := new(bytes.Buffer)
+
+	mw := multipart.NewWriter(body)
 
 	file, err := os.Open("./testdata/test-image-1.jpg")
 	if err != nil {
@@ -45,7 +51,7 @@ func TestCreate(t *testing.T) {
 	mw.Close()
 
 	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/files", b)
+	req := httptest.NewRequest(http.MethodPost, "/files", body)
 	// req.Header.Set("Content-Type", mw.FormDataContentType())
 	// req.Header.Set("Content-Type", "multipart/form-data; boundary="+mw.Boundary())
 
