@@ -21,9 +21,7 @@ func (ts *FolderTransactionSuite) TestCreate() {
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/folders", &b)
 
-	ts.mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO folders (parent_id, name, updated_at) VALUES ($1, $2, $3)`)).
-		WithArgs(nil, "folder1", sqlmock.AnyArg()).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+	setMockInsertDB(ts.mock, ts.entity, nil)
 
 	// Act
 	ts.handler.Create(rr, req)
@@ -34,9 +32,7 @@ func (ts *FolderTransactionSuite) TestCreate() {
 
 func (ts *FolderTransactionSuite) TestInsertRootDB() {
 	// Arrange
-	ts.mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO folders (parent_id, name, updated_at) VALUES ($1, $2, $3)`)).
-		WithArgs(nil, "folder1", sqlmock.AnyArg()).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+	setMockInsertDB(ts.mock, ts.entity, nil)
 
 	// Act
 	_, err := InsertDB(ts.conn, ts.entity)
@@ -49,13 +45,17 @@ func (ts *FolderTransactionSuite) TestInsertWithFolderDB() {
 	// Arrange
 	ts.entity.ParentID = common.ValidNullInt64(1)
 
-	ts.mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO folders (parent_id, name, updated_at) VALUES ($1, $2, $3)`)).
-		WithArgs(1, "folder1", sqlmock.AnyArg()).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+	setMockInsertDB(ts.mock, ts.entity, 1)
 
 	// Act
 	_, err := InsertDB(ts.conn, ts.entity)
 
 	// Assert
 	assert.NoError(ts.T(), err)
+}
+
+func setMockInsertDB(mock sqlmock.Sqlmock, entity *Folder, parentID any) {
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO folders (parent_id, name, updated_at) VALUES ($1, $2, $3)`)).
+		WithArgs(parentID, entity.Name, sqlmock.AnyArg()).
+		WillReturnResult(sqlmock.NewResult(1, 1))
 }
