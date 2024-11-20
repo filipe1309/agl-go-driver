@@ -55,11 +55,10 @@ func TestCreate(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/files", body)
-	// req.Header.Set("Content-Type", mw.FormDataContentType())
-	// req.Header.Set("Content-Type", "multipart/form-data; boundary="+mw.Boundary())
+	req.Header.Set("Content-Type", mw.FormDataContentType())
 
 	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO files (folder_id, owner_id, name, type, path, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`)).
-		WithArgs(nil, 1, "test-image-1.jpg", "image/jpg", "/", sqlmock.AnyArg()).
+		WithArgs(nil, 1, "test-image-1.jpg", "application/octet-stream", "/test-image-1.jpg", sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	h.Create(rr, req)
