@@ -3,7 +3,9 @@ package users
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -14,35 +16,49 @@ import (
 )
 
 func (ts *UserTransactionSuite) TestUpdate() {
-	// Arrange
-	user := &User{
-		ID:   1,
-		Name: "Test user 1",
+	tcs := []struct {
+		ID                 string
+		WithMock           bool
+		MockUser           *User
+		MockUpdatedWithErr bool
+		ExpectedStatusCode int
+	}{
+		{"1", true, &User{ID: 1, Name: "Test user 1"}, false, http.StatusOK},
+		{"A", false, nil, false, http.StatusBadRequest},
+		{"25", true, &User{ID: 25, Name: "Test user 25"}, true, http.StatusInternalServerError},
 	}
 
-	var b bytes.Buffer
-	err := json.NewEncoder(&b).Encode(user)
-	assert.NoError(ts.T(), err)
+	for _, tc := range tcs {
+		// Arrange
 
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPut, "/users/{id}", &b)
-	ctx := chi.NewRouteContext()
-	ctx.URLParams.Add("id", "1")
-	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
+		var b bytes.Buffer
+		err := json.NewEncoder(&b).Encode(tc.MockUser)
+		assert.NoError(ts.T(), err)
 
-	setMockUpdateDB(ts.mock, 1)
-	setMockReadDB(ts.mock)
+		rr := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPut, "/users/{id}", &b)
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("id", tc.ID)
+		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
-	// Act
-	ts.handler.Update(rr, req)
+		if tc.WithMock {
+			setMockUpdateDB(ts.mock, int(tc.MockUser.ID), tc.MockUpdatedWithErr)
+			if !tc.MockUpdatedWithErr {
+				setMockReadDB(ts.mock, int(tc.MockUser.ID))
+			}
+		}
 
-	// Assert
-	assert.Equal(ts.T(), http.StatusOK, rr.Code)
+		// Act
+		ts.handler.Update(rr, req)
+
+		// Assert
+		assert.Equal(ts.T(), tc.ExpectedStatusCode, rr.Code)
+	}
 }
 
 func (ts *UserTransactionSuite) TestUpdateDB() {
 	// Arrange
-	setMockUpdateDB(ts.mock, 1)
+	setMockUpdateDB(ts.mock, 1, false)
 
 	// Act
 	_, err := UpdateDB(ts.conn, 1, &User{
@@ -53,8 +69,13 @@ func (ts *UserTransactionSuite) TestUpdateDB() {
 	assert.NoError(ts.T(), err)
 }
 
-func setMockUpdateDB(mock sqlmock.Sqlmock, id int) {
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $2 WHERE id = $3`)).
-		WithArgs("Test user 1", sqlmock.AnyArg(), id).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+func setMockUpdateDB(mock sqlmock.Sqlmock, id int, err bool) {
+	exp := mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $2 WHERE id = $3`)).
+		WithArgs(fmt.Sprintf("%s %d", "Test user", id), sqlmock.AnyArg(), id)
+
+	if err {
+		exp.WillReturnError(sql.ErrNoRows)
+	} else {
+		exp.WillReturnResult(sqlmock.NewResult(1, 1))
+	}
 }
