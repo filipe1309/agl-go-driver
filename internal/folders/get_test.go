@@ -4,10 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
-	"regexp"
-	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 )
@@ -51,12 +48,4 @@ func (ts *FolderTransactionSuite) TestReadSubFolderDB() {
 
 	// Assert
 	assert.NoError(ts.T(), err)
-}
-
-func setMockReadFolderDB(mock sqlmock.Sqlmock) {
-	rows := sqlmock.NewRows([]string{"id", "parent_id", "name", "created_at", "updated_at", "deleted"}).
-		AddRow(1, 2, "Test name", time.Now(), time.Now(), false)
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM folders WHERE id = $1`)).
-		WithArgs(1).
-		WillReturnRows(rows)
 }
