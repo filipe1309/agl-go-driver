@@ -21,13 +21,15 @@ func (ts *FolderTransactionSuite) TestSoftDelete() {
 	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
 	setMockFilesReadAllDB(ts.mock)
-	setMockFilesUpdateDB(ts.mock, "Test file 1", 1)
-	setMockFilesUpdateDB(ts.mock, "Test file 2", 2)
+	setMockFilesUpdateDB(ts.mock, "Test file 1", 1, true)
+	setMockFilesUpdateDB(ts.mock, "Test file 2", 2, true)
 	setMockReadSubFolderDB(ts.mock)
 	setSoftDeleteDB(ts.mock)
 
+	// Act
 	ts.handler.SoftDelete(rr, req)
 
+	// Assert
 	assert.Equal(ts.T(), http.StatusNoContent, rr.Code)
 }
 
@@ -50,9 +52,9 @@ func setMockFilesReadAllDB(mock sqlmock.Sqlmock) {
 		WillReturnRows(rows)
 }
 
-func setMockFilesUpdateDB(mock sqlmock.Sqlmock, fileName string, id int) {
+func setMockFilesUpdateDB(mock sqlmock.Sqlmock, fileName string, id int, deleted bool) {
 	mock.ExpectExec(regexp.QuoteMeta(`UPDATE files SET name = $1, updated_at = $2, deleted = $3 WHERE id = $4`)).
-		WithArgs(fileName, sqlmock.AnyArg(), true, id).
+		WithArgs(fileName, sqlmock.AnyArg(), deleted, id).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 }
 
