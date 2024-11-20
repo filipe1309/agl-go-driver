@@ -2,7 +2,9 @@ package users
 
 import (
 	"database/sql"
+	"regexp"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
@@ -37,4 +39,12 @@ func (ts *UserTransactionSuite) AfterTest(_, _ string) {
 
 func TestUserSuite(t *testing.T) {
 	suite.Run(t, new(UserTransactionSuite))
+}
+
+func setMockReadDB(mock sqlmock.Sqlmock, id int) {
+	rows := sqlmock.NewRows([]string{"id", "name", "login", "password", "created_at", "updated_at", "last_login", "deleted"}).
+		AddRow(1, "Test name", "testlogin", "testpassword", time.Now(), time.Now(), time.Now(), false)
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).
+		WithArgs(id).
+		WillReturnRows(rows)
 }
