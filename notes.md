@@ -47,3 +47,17 @@ go test ./internal/users/... -v
 ```
 
 sql.NullInt64
+
+## Tests
+
+testify
+
+```bash
+go get github.com/stretchr/testify
+```
+
+```bash
+go get github.com/stretchr/testify/suite
+```
+
+
