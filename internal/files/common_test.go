@@ -2,7 +2,9 @@ package files
 
 import (
 	"database/sql"
+	"regexp"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/filipe1309/agl-go-driver/internal/bucket"
@@ -42,4 +44,12 @@ func (ts *FileTransactionSuite) AfterTest(_, _ string) {
 
 func TestFileSuite(t *testing.T) {
 	suite.Run(t, new(FileTransactionSuite))
+}
+
+func setMockReadDB(mock sqlmock.Sqlmock) {
+	rows := sqlmock.NewRows([]string{"id", "folder_id", "owner_id", "name", "type", "path", "created_at", "updated_at", "deleted"}).
+		AddRow(1, 1, 1, "Test file 1", "testtype", "testpath", time.Now(), time.Now(), false)
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM files WHERE id = $1`)).
+		WithArgs(1).
+		WillReturnRows(rows)
 }
