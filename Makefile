@@ -3,6 +3,7 @@
 # run tests
 test:
 	@echo "🟢 Running tests..."
+	go test ./internal/... -v
 
 # run node
 run:
