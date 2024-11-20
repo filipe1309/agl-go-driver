@@ -2,7 +2,9 @@ package folders
 
 import (
 	"database/sql"
+	"regexp"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
@@ -25,7 +27,7 @@ func (ts *FolderTransactionSuite) SetupTest() {
 	ts.handler = handler{ts.conn}
 
 	ts.entity = &Folder{
-		Name:     "folder1",
+		Name: "folder1",
 	}
 }
 
@@ -35,4 +37,21 @@ func (ts *FolderTransactionSuite) AfterTest(_, _ string) {
 
 func TestFolderSuite(t *testing.T) {
 	suite.Run(t, new(FolderTransactionSuite))
+}
+
+func setMockFilesReadAllDB(mock sqlmock.Sqlmock) {
+	rows := sqlmock.NewRows([]string{"id", "folder_id", "owner_id", "name", "type", "path", "created_at", "updated_at", "deleted"}).
+		AddRow(1, 1, 1, "Test file 1", "testtype", "testpath", time.Now(), time.Now(), false).
+		AddRow(2, 1, 1, "Test file 2", "testtype", "testpath", time.Now(), time.Now(), false)
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM files WHERE folder_id = $1 AND deleted = FALSE`)).
+		WillReturnRows(rows)
+}
+
+func setMockReadSubFolderDB(mock sqlmock.Sqlmock) {
+	rows := sqlmock.NewRows([]string{"id", "parent_id", "name", "created_at", "updated_at", "deleted"}).
+		AddRow(2, 3, "Test sub name", time.Now(), time.Now(), false).
+		AddRow(3, 3, "Test sub name 2", time.Now(), time.Now(), false)
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM folders WHERE parent_id = $1 AND deleted = FALSE`)).
+		WithArgs(1).
+		WillReturnRows(rows)
 }
