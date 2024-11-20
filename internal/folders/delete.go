@@ -109,9 +109,6 @@ func SoftDeleteDB(db *sql.DB, id int64) error {
 	stmt := `UPDATE folders SET updated_at = $1, deleted = TRUE WHERE id = $2`
 
 	_, err := db.Exec(stmt, time.Now(), id)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
