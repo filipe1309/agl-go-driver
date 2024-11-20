@@ -4,36 +4,25 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
-	"testing"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/go-chi/chi/v5"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestUpdate(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Error(err)
-	}
-	defer db.Close()
-
-	h := handler{db}
-
+func (ts *TransactionSuite) TestUpdate() {
+	// Arrange
 	user := &User{
 		ID:   1,
 		Name: "Test user 1",
 	}
 
 	var b bytes.Buffer
-	err = json.NewEncoder(&b).Encode(user)
-	if err != nil {
-		t.Error(err)
-	}
+	err := json.NewEncoder(&b).Encode(user)
+	assert.NoError(ts.T(), err)
 
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPut, "/users/{id}", &b)
@@ -41,43 +30,31 @@ func TestUpdate(t *testing.T) {
 	ctx.URLParams.Add("id", "1")
 	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $2 WHERE id = $3`)).
-		WithArgs("Test user 1", sqlmock.AnyArg(), 1).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+	setMockUpdateDB(ts.mock, 1)
+	setMockReadDB(ts.mock)
 
-	rows := sqlmock.NewRows([]string{"id", "name", "login", "password", "created_at", "updated_at", "last_login", "deleted"}).
-		AddRow(1, "Test name", "testlogin", "testpassword", time.Now(), time.Now(), time.Now(), false)
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).
-		WithArgs(1).
-		WillReturnRows(rows)
+	// Act
+	ts.handler.Update(rr, req)
 
-	h.Update(rr, req)
-
-	if rr.Code != http.StatusOK {
-		t.Errorf("Expected status code %d, got %d", http.StatusOK, rr.Code)
-		fmt.Println(rr.Body.String())
-	}
+	// Assert
+	assert.Equal(ts.T(), http.StatusOK, rr.Code)
 }
 
-func TestUpdateDB(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Error(err)
-	}
-	defer db.Close()
+func (ts *TransactionSuite) TestUpdateDB() {
+	// Arrange
+	setMockUpdateDB(ts.mock, 1)
 
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $2 WHERE id = $3`)).
-		WithArgs("Test name", sqlmock.AnyArg(), 1).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-
-	_, err = UpdateDB(db, 1, &User{
-		Name: "Test name",
+	// Act
+	_, err := UpdateDB(ts.conn, 1, &User{
+		Name: "Test user 1",
 	})
-	if err != nil {
-		t.Error(err)
-	}
 
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Error(err)
-	}
+	// Assert
+	assert.NoError(ts.T(), err)
+}
+
+func setMockUpdateDB(mock sqlmock.Sqlmock, id int) {
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $2 WHERE id = $3`)).
+		WithArgs("Test user 1", sqlmock.AnyArg(), id).
+		WillReturnResult(sqlmock.NewResult(1, 1))
 }
