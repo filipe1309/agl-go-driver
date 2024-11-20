@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (ts *TransactionSuite) TestUpdate() {
+func (ts *UserTransactionSuite) TestUpdate() {
 	// Arrange
 	user := &User{
 		ID:   1,
@@ -40,7 +40,7 @@ func (ts *TransactionSuite) TestUpdate() {
 	assert.Equal(ts.T(), http.StatusOK, rr.Code)
 }
 
-func (ts *TransactionSuite) TestUpdateDB() {
+func (ts *UserTransactionSuite) TestUpdateDB() {
 	// Arrange
 	setMockUpdateDB(ts.mock, 1)
 

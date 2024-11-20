@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (ts *TransactionSuite) TestCreate() {
+func (ts *UserTransactionSuite) TestCreate() {
 	// Arrange
 	var b bytes.Buffer
 	err := json.NewEncoder(&b).Encode(ts.entity)
@@ -30,7 +30,7 @@ func (ts *TransactionSuite) TestCreate() {
 	assert.Equal(ts.T(), http.StatusCreated, rr.Code)
 }
 
-func (ts *TransactionSuite) TestInsertDB() {
+func (ts *UserTransactionSuite) TestInsertDB() {
 	// Arrange
 	setMockInsertDB(ts.mock, ts.entity)
 

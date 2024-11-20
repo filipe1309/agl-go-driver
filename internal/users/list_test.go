@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (ts *TransactionSuite) TestList() {
+func (ts *UserTransactionSuite) TestList() {
 	// Arrange
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/users", nil)
@@ -24,7 +24,7 @@ func (ts *TransactionSuite) TestList() {
 	assert.Equal(ts.T(), http.StatusOK, rr.Code)
 }
 
-func (ts *TransactionSuite) TestReadAllDB() {
+func (ts *UserTransactionSuite) TestReadAllDB() {
 	// Arrange
 	setMockReadAllDB(ts.mock)
 

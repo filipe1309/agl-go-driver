@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (ts *TransactionSuite) TestSoftDelete() {
+func (ts *UserTransactionSuite) TestSoftDelete() {
 	// Arrange
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodDelete, "/users/{id}", nil)
@@ -27,7 +27,7 @@ func (ts *TransactionSuite) TestSoftDelete() {
 	assert.Equal(ts.T(), http.StatusNoContent, rr.Code)
 }
 
-func (ts *TransactionSuite) TestSoftDeleteDB() {
+func (ts *UserTransactionSuite) TestSoftDeleteDB() {
 	// Arrange
 	setMockSoftDeleteDB(ts.mock, 1)
 

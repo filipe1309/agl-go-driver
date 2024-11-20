@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type TransactionSuite struct {
+type UserTransactionSuite struct {
 	suite.Suite
 	conn    *sql.DB
 	mock    sqlmock.Sqlmock
@@ -17,7 +17,7 @@ type TransactionSuite struct {
 	entity  *User
 }
 
-func (ts *TransactionSuite) SetupTest() {
+func (ts *UserTransactionSuite) SetupTest() {
 	var err error
 	ts.conn, ts.mock, err = sqlmock.New()
 	assert.NoError(ts.T(), err)
@@ -31,10 +31,10 @@ func (ts *TransactionSuite) SetupTest() {
 	}
 }
 
-func (ts *TransactionSuite) AfterTest(_, _ string) {
+func (ts *UserTransactionSuite) AfterTest(_, _ string) {
 	assert.NoError(ts.T(), ts.mock.ExpectationsWereMet())
 }
 
 func TestSuite(t *testing.T) {
-	suite.Run(t, new(TransactionSuite))
+	suite.Run(t, new(UserTransactionSuite))
 }
