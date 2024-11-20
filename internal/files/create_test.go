@@ -14,6 +14,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/filipe1309/agl-go-driver/internal/bucket"
 	"github.com/filipe1309/agl-go-driver/internal/common"
+	"github.com/filipe1309/agl-go-driver/internal/queue"
 )
 
 func TestCreate(t *testing.T) {
@@ -28,7 +29,9 @@ func TestCreate(t *testing.T) {
 		t.Error(err)
 	}
 
-	h := handler{db, mockBucket, nil}
+	mockQueue, err := queue.New(queue.MockQueueProvider, nil)
+
+	h := handler{db, mockBucket, mockQueue}
 
 	body := new(bytes.Buffer)
 
