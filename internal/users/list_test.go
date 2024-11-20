@@ -4,64 +4,45 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
-	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestList(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Error(err)
-	}
-	defer db.Close()
-
-	h := handler{db}
-
+func (ts *TransactionSuite) TestList() {
+	// Arrange
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/users", nil)
 
-	rows := sqlmock.NewRows([]string{"id", "name", "login", "password", "created_at", "updated_at", "last_login", "deleted"}).
-		AddRow(1, "Test name", "testlogin", "testpassword", time.Now(), time.Now(), time.Now(), false).
-		AddRow(2, "Test name 2", "testlogin2", "testpassword", time.Now(), time.Now(), time.Now(), true)
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE deleted = FALSE`)).
-		WillReturnRows(rows)
+	setMockReadAllDB(ts.mock)
 
-	h.List(rr, req)
+	// Act
+	ts.handler.List(rr, req)
 
-	if rr.Code != http.StatusOK {
-		t.Errorf("Expected status code %d, got %d", http.StatusOK, rr.Code)
-	}
-
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Error(err)
-	}
+	// Assert
+	assert.Equal(ts.T(), http.StatusOK, rr.Code)
 }
 
-func TestReadAllDB(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Error(err)
-	}
-	defer db.Close()
+func (ts *TransactionSuite) TestReadAllDB() {
+	// Arrange
+	setMockReadAllDB(ts.mock)
 
-	rows := sqlmock.NewRows([]string{"id", "name", "login", "password", "created_at", "updated_at", "last_login", "deleted"}).
-		AddRow(1, "Test name", "testlogin", "testpassword", time.Now(), time.Now(), time.Now(), false).
-		AddRow(2, "Test name 2", "testlogin2", "testpassword", time.Now(), time.Now(), time.Now(), true)
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE deleted = FALSE`)).
-		WillReturnRows(rows)
+	// Act
+	_, err := ReadAllDB(ts.conn)
 
-	_, err = ReadAllDB(db)
-	if err != nil {
-		t.Error(err)
-	}
+	// Assert
+	assert.NoError(ts.T(), err)
 
 	// if len(list) > 1 { // this doesn't work with sqlmock, because it doesn't filter the rows
 	// 	t.Error("Expected 1 row, got", len(list))
 	// }
+}
 
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Error(err)
-	}
+func setMockReadAllDB(mock sqlmock.Sqlmock) {
+	rows := sqlmock.NewRows([]string{"id", "name", "login", "password", "created_at", "updated_at", "last_login", "deleted"}).
+		AddRow(1, "Test name", "testlogin", "testpassword", time.Now(), time.Now(), time.Now(), false).
+		AddRow(2, "Test name 2", "testlogin2", "testpassword", time.Now(), time.Now(), time.Now(), true)
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE deleted = FALSE`)).
+		WillReturnRows(rows)
 }
