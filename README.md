@@ -173,6 +173,11 @@ Please make sure to update tests as appropriate. -->
 ## :clap: Acknowledgments
 
 - [ShubcoGen Template™](https://github.com/filipe1309/shubcogen-template)
+- [Aprenda Golang](https://aprendagolang.com.br/)
+- [C4 Model](https://c4model.com/)
+- [Mermaid](https://mermaid-js.github.io/mermaid/)
+- [Go](https://golang.org/)
+- [Testing REST API in Go with Testify and Mockery](https://medium.com/nerd-for-tech/testing-rest-api-in-go-with-testify-and-mockery-c31ea2cc88f9)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
