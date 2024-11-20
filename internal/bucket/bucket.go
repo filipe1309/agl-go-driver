@@ -5,8 +5,6 @@ import (
 	"io"
 	"os"
 	"reflect"
-
-	"github.com/filipe1309/agl-go-driver/internal/bucket/buckettest"
 )
 
 const (
@@ -27,7 +25,9 @@ func New(bt BucketType, cfg any) (b *Bucket, err error) {
 		
 		b.provider = newAWSS3Session(cfg.(AWSS3Config))
 	case MockBucketProvider:
-		b.provider = buckettest.New()
+		b.provider = &MockBucket{
+			content: make(map[string][]byte),
+		}
 	default:
 		return nil, fmt.Errorf("type not supported")
 	}

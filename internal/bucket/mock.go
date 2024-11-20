@@ -1,4 +1,4 @@
-package buckettest
+package bucket
 
 import (
 	"io"
@@ -7,12 +7,6 @@ import (
 
 type MockBucket struct {
 	content map[string][]byte
-}
-
-func New() *MockBucket {
-	return &MockBucket{
-		content: make(map[string][]byte),
-	}
 }
 
 func (mb *MockBucket) Upload(file io.Reader, key string) error {
