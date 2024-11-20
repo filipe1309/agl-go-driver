@@ -4,10 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
-	"regexp"
-	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,7 +17,7 @@ func (ts *UserTransactionSuite) TestGetByID() {
 	ctx.URLParams.Add("id", "1")
 	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
-	setMockReadDB(ts.mock)
+	setMockReadDB(ts.mock, 1)
 
 	// Act
 	ts.handler.GetByID(rr, req)
@@ -31,19 +28,11 @@ func (ts *UserTransactionSuite) TestGetByID() {
 
 func (ts *UserTransactionSuite) TestReadDB() {
 	// Arrange
-	setMockReadDB(ts.mock)
+	setMockReadDB(ts.mock, 1)
 
 	// Act
 	_, err := ReadDB(ts.conn, 1)
 
 	// Assert
 	assert.NoError(ts.T(), err)
-}
-
-func setMockReadDB(mock sqlmock.Sqlmock) {
-	rows := sqlmock.NewRows([]string{"id", "name", "login", "password", "created_at", "updated_at", "last_login", "deleted"}).
-		AddRow(1, "Test name", "testlogin", "testpassword", time.Now(), time.Now(), time.Now(), false)
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).
-		WithArgs(1).
-		WillReturnRows(rows)
 }
