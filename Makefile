@@ -3,7 +3,11 @@
 # run tests
 test:
 	@echo "🟢 Running tests..."
-	go test ./internal/... -v
+	go test ./internal/... -v -coverprofile=coverage.out
+
+coverage:
+	@echo "🟢 Running coverage..."
+	go tool cover -html=coverage.out
 
 # run node
 run:
