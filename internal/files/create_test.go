@@ -2,54 +2,31 @@ package files
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"regexp"
-	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/filipe1309/agl-go-driver/internal/bucket"
 	"github.com/filipe1309/agl-go-driver/internal/common"
-	"github.com/filipe1309/agl-go-driver/internal/queue"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestCreate(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Error(err)
-	}
-	defer db.Close()
-
-	mockBucket, err := bucket.New(bucket.MockBucketProvider, nil)
-	if err != nil {
-		t.Error(err)
-	}
-
-	mockQueue, err := queue.New(queue.MockQueueProvider, nil)
-
-	h := handler{db, mockBucket, mockQueue}
-
+func (ts *FileTransactionSuite) TestCreate() {
+	// Arrange
 	body := new(bytes.Buffer)
-
 	mw := multipart.NewWriter(body)
 
 	file, err := os.Open("./testdata/test-image-1.jpg")
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(ts.T(), err)
 
 	fw, err := mw.CreateFormFile("file", "test-image-1.jpg")
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(ts.T(), err)
 
-	if _, err := io.Copy(fw, file); err != nil {
-		t.Error(err)
-	}
+	_, err = io.Copy(fw, file)
+	assert.NoError(ts.T(), err)
 
 	mw.Close()
 
@@ -57,67 +34,40 @@ func TestCreate(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/files", body)
 	req.Header.Set("Content-Type", mw.FormDataContentType())
 
-	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO files (folder_id, owner_id, name, type, path, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`)).
-		WithArgs(nil, 1, "test-image-1.jpg", "application/octet-stream", "/test-image-1.jpg", sqlmock.AnyArg()).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+	setMockInsertDB(ts.mock, ts.entity, nil)
 
-	h.Create(rr, req)
+	// Act
+	ts.handler.Create(rr, req)
 
-	if rr.Code != http.StatusCreated {
-		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rr.Code)
-		fmt.Println(rr.Body.String())
-	}
+	// Assert
+	assert.Equal(ts.T(), http.StatusCreated, rr.Code)
 }
 
-func TestInsertRootDB(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Error(err)
-	}
-	defer db.Close()
+func (ts *FileTransactionSuite) TestInsertRootDB() {
+	// Arrange
+	setMockInsertDB(ts.mock, ts.entity, nil)
 
-	file, err := New(1, "test-image-1.jpg", "image/jpg", "/")
-	if err != nil {
-		t.Error(err)
-	}
+	// Act
+	_, err := InsertDB(ts.conn, ts.entity)
 
-	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO files (folder_id, owner_id, name, type, path, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`)).
-		WithArgs(nil, 1, "test-image-1.jpg", "image/jpg", "/", sqlmock.AnyArg()).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-
-	_, err = InsertDB(db, file)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Error(err)
-	}
+	// Assert
+	assert.NoError(ts.T(), err)
 }
 
-func TestInsertWithFolderDB(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Error(err)
-	}
-	defer db.Close()
+func (ts *FileTransactionSuite) TestInsertWithFolderDB() {
+	// Arrange
+	ts.entity.FolderID = common.ValidNullInt64(2)
+	setMockInsertDB(ts.mock, ts.entity, 2)
 
-	file, err := New(1, "test-image-1.jpg", "image/jpg", "/")
-	if err != nil {
-		t.Error(err)
-	}
-	file.FolderID = common.ValidNullInt64(2)
+	// Act
+	_, err := InsertDB(ts.conn, ts.entity)
 
+	// Assert
+	assert.NoError(ts.T(), err)
+}
+
+func setMockInsertDB(mock sqlmock.Sqlmock, entity *File, folderID any) {
 	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO files (folder_id, owner_id, name, type, path, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`)).
-		WithArgs(int64(2), 1, "test-image-1.jpg", "image/jpg", "/", sqlmock.AnyArg()).
+		WithArgs(folderID, 1, entity.Name, entity.Type, entity.Path, sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
-
-	_, err = InsertDB(db, file)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Error(err)
-	}
 }
