@@ -41,10 +41,15 @@ func TestUserSuite(t *testing.T) {
 	suite.Run(t, new(UserTransactionSuite))
 }
 
-func setMockReadDB(mock sqlmock.Sqlmock, id int) {
+func setMockReadDB(mock sqlmock.Sqlmock, id int, err bool) {
 	rows := sqlmock.NewRows([]string{"id", "name", "login", "password", "created_at", "updated_at", "last_login", "deleted"}).
 		AddRow(1, "Test name", "testlogin", "testpassword", time.Now(), time.Now(), time.Now(), false)
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).
-		WithArgs(id).
-		WillReturnRows(rows)
+	exp := mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).
+		WithArgs(id)
+
+	if err {
+		exp.WillReturnError(sql.ErrNoRows)
+	} else {
+		exp.WillReturnRows(rows)
+	}
 }
