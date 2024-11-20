@@ -15,6 +15,8 @@ const (
 type BucketType int
 
 func New(bt BucketType, cfg any) (b *Bucket, err error) {
+	b = new(Bucket)
+
 	rt := reflect.TypeOf(cfg)
 
 	switch bt {
@@ -22,7 +24,7 @@ func New(bt BucketType, cfg any) (b *Bucket, err error) {
 		if rt.Name() != "AWSS3Config" {
 			return nil, fmt.Errorf("invalid aws s3 config type: %s", rt.Name())
 		}
-		
+
 		b.provider = newAWSS3Session(cfg.(AWSS3Config))
 	case MockBucketProvider:
 		b.provider = &MockBucket{

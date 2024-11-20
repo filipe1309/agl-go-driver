@@ -14,6 +14,8 @@ const (
 type QueueType int
 
 func New(qt QueueType, cfg any) (q *Queue, err error) {
+	q = new(Queue)
+
 	rt := reflect.TypeOf(cfg)
 
 	switch qt {
