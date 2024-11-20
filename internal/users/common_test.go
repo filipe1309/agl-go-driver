@@ -35,6 +35,6 @@ func (ts *UserTransactionSuite) AfterTest(_, _ string) {
 	assert.NoError(ts.T(), ts.mock.ExpectationsWereMet())
 }
 
-func TestSuite(t *testing.T) {
+func TestUserSuite(t *testing.T) {
 	suite.Run(t, new(UserTransactionSuite))
 }
