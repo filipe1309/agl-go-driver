@@ -18,7 +18,6 @@ import (
 func (ts *UserTransactionSuite) TestUpdate() {
 	tcs := []struct {
 		Name               string
-		ID                 int
 		IDStr              string
 		WithMock           bool
 		MockUser           *User
@@ -28,7 +27,6 @@ func (ts *UserTransactionSuite) TestUpdate() {
 	}{
 		{
 			Name:               "Success",
-			ID:                 1,
 			IDStr:              "1",
 			WithMock:           true,
 			MockUser:           &User{ID: 1, Name: "Test user 1"},
@@ -38,7 +36,6 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		},
 		{
 			Name:               "Invalid user - no name",
-			ID:                 2,
 			IDStr:              "2",
 			WithMock:           false,
 			MockUser:           &User{ID: 2},
@@ -48,7 +45,6 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		},
 		{
 			Name:               "Invalid json - empty body",
-			ID:                 3,
 			IDStr:              "3",
 			WithMock:           false,
 			MockUser:           &User{},
@@ -58,17 +54,15 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		},
 		{
 			Name:               "Invalid url param - id",
-			ID:                 -1,
 			IDStr:              "A",
 			WithMock:           false,
-			MockUser:           &User{Name: "Test user A"},
+			MockUser:           &User{ID: -1, Name: "Test user A"},
 			MockUpdatedWithErr: false,
 			MockReadWithErr:    false,
 			ExpectedStatusCode: http.StatusBadRequest,
 		},
 		{
 			Name:               "DB error - no Update id",
-			ID:                 25,
 			IDStr:              "25",
 			WithMock:           true,
 			MockUser:           &User{ID: 25, Name: "Test user 25"},
@@ -79,7 +73,6 @@ func (ts *UserTransactionSuite) TestUpdate() {
 
 		{
 			Name:               "DB error - no read id",
-			ID:                 26,
 			IDStr:              "26",
 			WithMock:           true,
 			MockUser:           &User{ID: 26, Name: "Test user 26"},
@@ -104,9 +97,9 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
 		if tc.WithMock {
-			setMockUpdateDB(ts.mock, tc.ID, tc.MockUpdatedWithErr)
+			setMockUpdateDB(ts.mock, int(tc.MockUser.ID), tc.MockUpdatedWithErr)
 			if !tc.MockUpdatedWithErr {
-				setMockReadDB(ts.mock, tc.ID, tc.MockReadWithErr)
+				setMockReadDB(ts.mock, int(tc.MockUser.ID), tc.MockReadWithErr)
 			}
 		}
 

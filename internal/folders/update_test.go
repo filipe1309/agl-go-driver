@@ -18,7 +18,6 @@ import (
 func (ts *FolderTransactionSuite) TestUpdate() {
 	tcs := []struct {
 		Name                    string
-		ID                      int
 		IDStr                   string
 		WithMock                bool
 		MockFolder              *Folder
@@ -28,7 +27,6 @@ func (ts *FolderTransactionSuite) TestUpdate() {
 	}{
 		{
 			Name:                    "Success",
-			ID:                      1,
 			IDStr:                   "1",
 			WithMock:                true,
 			MockFolder:              &Folder{ID: 1, Name: "Test folder 1"},
@@ -38,7 +36,6 @@ func (ts *FolderTransactionSuite) TestUpdate() {
 		},
 		{
 			Name:                    "Invalid folder - no name",
-			ID:                      2,
 			IDStr:                   "2",
 			WithMock:                false,
 			MockFolder:              &Folder{ID: 2},
@@ -48,7 +45,6 @@ func (ts *FolderTransactionSuite) TestUpdate() {
 		},
 		{
 			Name:                    "Invalid json - empty body",
-			ID:                      3,
 			IDStr:                   "3",
 			WithMock:                false,
 			MockFolder:              &Folder{},
@@ -58,17 +54,15 @@ func (ts *FolderTransactionSuite) TestUpdate() {
 		},
 		{
 			Name:                    "Invalid url param - id",
-			ID:                      -1,
 			IDStr:                   "A",
 			WithMock:                false,
-			MockFolder:              &Folder{ID: 1, Name: "Test folder 1"},
+			MockFolder:              &Folder{ID: -1, Name: "Test folder 1"},
 			MockUpdatedDBWithErr:    false,
 			MockReadFolderDBWithErr: false,
 			ExpectedStatusCode:      http.StatusBadRequest,
 		},
 		{
 			Name:                    "DB error - update",
-			ID:                      1,
 			IDStr:                   "1",
 			WithMock:                true,
 			MockFolder:              &Folder{ID: 1, Name: "Test folder 1"},
@@ -79,7 +73,6 @@ func (ts *FolderTransactionSuite) TestUpdate() {
 
 		{
 			Name:                    "DB error - no read id",
-			ID:                      1,
 			IDStr:                   "1",
 			WithMock:                true,
 			MockFolder:              &Folder{ID: 1, Name: "Test folder 1"},
@@ -107,7 +100,7 @@ func (ts *FolderTransactionSuite) TestUpdate() {
 		fmt.Println(tc.Name)
 		if tc.WithMock {
 			fmt.Println("WithMock", tc.MockUpdatedDBWithErr)
-			setMockUpdateDB(ts.mock, tc.ID, tc.MockUpdatedDBWithErr)
+			setMockUpdateDB(ts.mock, int(tc.MockFolder.ID), tc.MockUpdatedDBWithErr)
 			if !tc.MockUpdatedDBWithErr {
 				setMockReadFolderDB(ts.mock, tc.MockReadFolderDBWithErr)
 			}
