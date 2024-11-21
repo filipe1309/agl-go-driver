@@ -37,7 +37,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 			ExpectedStatusCode: http.StatusOK,
 		},
 		{
-			Name:               "No Name",
+			Name:               "Invalid user - no name",
 			ID:                 2,
 			IDStr:              "2",
 			WithMock:           false,
@@ -47,7 +47,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 			ExpectedStatusCode: http.StatusBadRequest,
 		},
 		{
-			Name:               "Wrong Body",
+			Name:               "Invalid json - empty body",
 			ID:                 3,
 			IDStr:              "3",
 			WithMock:           false,
@@ -57,7 +57,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 			ExpectedStatusCode: http.StatusBadRequest,
 		},
 		{
-			Name:               "Wrong ID",
+			Name:               "Invalid url param - id",
 			ID:                 -1,
 			IDStr:              "A",
 			WithMock:           false,
@@ -67,7 +67,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 			ExpectedStatusCode: http.StatusBadRequest,
 		},
 		{
-			Name:               "No Update ID",
+			Name:               "DB error - no Update id",
 			ID:                 25,
 			IDStr:              "25",
 			WithMock:           true,
@@ -78,7 +78,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		},
 
 		{
-			Name:               "No Read ID",
+			Name:               "DB error - no read id",
 			ID:                 26,
 			IDStr:              "26",
 			WithMock:           true,
@@ -92,7 +92,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 	for _, tc := range tcs {
 		// Arrange
 		var b bytes.Buffer
-		if tc.Name != "Wrong Body" {
+		if tc.Name != "Invalid json - empty body" {
 			err := json.NewEncoder(&b).Encode(tc.MockUser)
 			assert.NoError(ts.T(), err)
 		}

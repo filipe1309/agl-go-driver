@@ -13,15 +13,16 @@ import (
 
 func (ts *UserTransactionSuite) TestSoftDelete() {
 	tcs := []struct {
+		Name 						 string
 		ID                 string
 		MockID             int64
 		WithMock           bool
 		MockWithErr        bool
 		ExpectedStatusCode int
 	}{
-		{"1", 1, true, false, http.StatusNoContent},
-		{"A", -1, false, true, http.StatusBadRequest},
-		{"25", 25, true, true, http.StatusInternalServerError},
+		{"Success", "1", 1, true, false, http.StatusNoContent},
+		{"Invalid url param - id", "A", -1, false, true, http.StatusBadRequest},
+		{"DB error", "25", 25, true, true, http.StatusInternalServerError},
 	}
 
 	for _, tc := range tcs {
