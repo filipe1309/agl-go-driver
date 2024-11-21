@@ -17,7 +17,7 @@ func (ts *FolderTransactionSuite) TestGetByID() {
 	ctx.URLParams.Add("id", "1")
 	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
-	setMockReadFolderDB(ts.mock)
+	setMockReadFolderDB(ts.mock, false)
 	setMockReadSubFolderDB(ts.mock)
 	setMockFilesReadAllDB(ts.mock)
 
@@ -30,7 +30,7 @@ func (ts *FolderTransactionSuite) TestGetByID() {
 
 func (ts *FolderTransactionSuite) TestReadFolderDB() {
 	// Arrange
-	setMockReadFolderDB(ts.mock)
+	setMockReadFolderDB(ts.mock, false)
 
 	// Act
 	_, err := ReadDB(ts.conn, 1)

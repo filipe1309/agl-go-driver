@@ -56,10 +56,15 @@ func setMockReadSubFolderDB(mock sqlmock.Sqlmock) {
 		WillReturnRows(rows)
 }
 
-func setMockReadFolderDB(mock sqlmock.Sqlmock) {
+func setMockReadFolderDB(mock sqlmock.Sqlmock, err bool) {
 	rows := sqlmock.NewRows([]string{"id", "parent_id", "name", "created_at", "updated_at", "deleted"}).
 		AddRow(1, 2, "Test folder 1", time.Now(), time.Now(), false)
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM folders WHERE id = $1`)).
-		WithArgs(1).
-		WillReturnRows(rows)
+	exp := mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM folders WHERE id = $1`)).
+		WithArgs(1)
+
+	if err {
+		exp.WillReturnError(sql.ErrNoRows)
+	} else {
+		exp.WillReturnRows(rows)
+	}
 }
