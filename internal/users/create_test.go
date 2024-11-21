@@ -40,17 +40,27 @@ func (ts *UserTransactionSuite) TestCreate() {
 			MockInsertDBWithErr: false,
 			ExpectedStatusCode:  http.StatusBadRequest,
 		},
+		{
+			Name:                "Invalid json",
+			Password:            "",
+			WithMockDB:          false,
+			MockInsertDBWithErr: false,
+			ExpectedStatusCode:  http.StatusBadRequest,
+		},
 	}
 
 	for _, tc := range tcs {
 		// Arrange
 		ts.entity.Password = tc.Password
+
 		var b bytes.Buffer
-		err := json.NewEncoder(&b).Encode(ts.entity)
-		assert.NoError(ts.T(), err)
+		if tc.Name != "Invalid json" {
+			err := json.NewEncoder(&b).Encode(ts.entity)
+			assert.NoError(ts.T(), err)
+		}
 
 		ts.entity.SetPassword(ts.entity.Password)
-		
+
 		rr := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPost, "/users", &b)
 
