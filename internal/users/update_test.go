@@ -17,27 +17,27 @@ import (
 
 func (ts *UserTransactionSuite) TestUpdate() {
 	tcs := []struct {
-		Name  string
-		ID    int
-		IDStr string
-		// body 						 string
+		Name               string
+		ID                 int
+		IDStr              string
 		WithMock           bool
 		MockUser           *User
 		MockUpdatedWithErr bool
 		MockReadWithErr    bool
 		ExpectedStatusCode int
 	}{
-		{"Success",
+		{
+			"Success",
 			1,
 			"1",
 			true,
-			&User{ID: 1,
-				Name: "Test user 1"},
+			&User{ID: 1, Name: "Test user 1"},
 			false,
 			false,
 			http.StatusOK,
 		},
-		{"No Name",
+		{
+			"No Name",
 			2,
 			"2",
 			false,
@@ -46,7 +46,8 @@ func (ts *UserTransactionSuite) TestUpdate() {
 			false,
 			http.StatusBadRequest,
 		},
-		{"Wrong Body",
+		{
+			"Wrong Body",
 			3,
 			"3",
 			false,
@@ -55,7 +56,8 @@ func (ts *UserTransactionSuite) TestUpdate() {
 			false,
 			http.StatusBadRequest,
 		},
-		{"Wrong ID",
+		{
+			"Wrong ID",
 			-1,
 			"A",
 			false,
@@ -64,25 +66,25 @@ func (ts *UserTransactionSuite) TestUpdate() {
 			false,
 			http.StatusBadRequest,
 		},
-		{"No Update ID",
+		{
+			"No Update ID",
 			25,
 			"25",
 			true,
-			&User{ID: 25,
-				Name: "Test user 25"},
+			&User{ID: 25, Name: "Test user 25"},
 			true,
 			false,
 			http.StatusInternalServerError,
 		},
 
-		{Name: "No Read ID",
-			ID: 26,
-			IDStr: "26",
-			WithMock: true,
-			MockUser: &User{ID: 26,
-				Name: "Test user 26"},
+		{
+			Name:               "No Read ID",
+			ID:                 26,
+			IDStr:              "26",
+			WithMock:           true,
+			MockUser:           &User{ID: 26, Name: "Test user 26"},
 			MockUpdatedWithErr: false,
-			MockReadWithErr: true,
+			MockReadWithErr:    true,
 			ExpectedStatusCode: http.StatusInternalServerError,
 		},
 	}
