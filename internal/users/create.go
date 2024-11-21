@@ -14,17 +14,13 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = user.SetPassword(user.Password)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	err = user.Validate()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	user.SetPassword(user.Password)
 
 	id, err := InsertDB(h.db, user)
 	if err != nil {
