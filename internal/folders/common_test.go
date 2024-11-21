@@ -27,6 +27,7 @@ func (ts *FolderTransactionSuite) SetupTest() {
 	ts.handler = handler{ts.conn}
 
 	ts.entity = &Folder{
+		ID:   1,
 		Name: "folder1",
 	}
 }
