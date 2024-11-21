@@ -52,7 +52,9 @@ func (ts *UserTransactionSuite) TestGetByID() {
 		ctx.URLParams.Add("id", tc.IDStr)
 		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
-		setMockReadDB(ts.mock, tc.ID, tc.MockReadDBWithErr)
+		if tc.WithMockDB {
+			setMockReadDB(ts.mock, tc.ID, tc.MockReadDBWithErr)
+		}
 
 		// Act
 		ts.handler.GetByID(rr, req)
