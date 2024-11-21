@@ -5,7 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -97,9 +96,7 @@ func (ts *FolderTransactionSuite) TestUpdate() {
 		ctx.URLParams.Add("id", tc.IDStr)
 		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
-		fmt.Println(tc.Name)
 		if tc.WithMock {
-			fmt.Println("WithMock", tc.MockUpdatedDBWithErr)
 			setMockUpdateDB(ts.mock, int(tc.MockFolder.ID), tc.MockUpdatedDBWithErr)
 			if !tc.MockUpdatedDBWithErr {
 				setMockReadFolderDB(ts.mock, tc.MockReadFolderDBWithErr)
