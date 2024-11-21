@@ -10,20 +10,56 @@ import (
 )
 
 func (ts *UserTransactionSuite) TestGetByID() {
-	// Arrange
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/users/{id}", nil)
-	ctx := chi.NewRouteContext()
-	ctx.URLParams.Add("id", "1")
-	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
+	tcs := []struct {
+		Name               string
+		ID                 int
+		IDStr              string
+		WithMockDB         bool
+		MockReadDBWithErr  bool
+		ExpectedStatusCode int
+	}{
+		{
+			Name:               "Success",
+			ID:                 1,
+			IDStr:              "1",
+			WithMockDB:         true,
+			MockReadDBWithErr:  false,
+			ExpectedStatusCode: http.StatusOK,
+		},
+		{
+			Name:               "DB error",
+			ID:                 1,
+			IDStr:              "1",
+			WithMockDB:         true,
+			MockReadDBWithErr:  true,
+			ExpectedStatusCode: http.StatusInternalServerError,
+		},
+		{
+			Name:               "Invalid url param - id",
+			ID:                 0,
+			IDStr:              "A",
+			WithMockDB:         false,
+			MockReadDBWithErr:  false,
+			ExpectedStatusCode: http.StatusBadRequest,
+		},
+	}
 
-	setMockReadDB(ts.mock, 1, false)
+	for _, tc := range tcs {
+		// Arrange
+		rr := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodGet, "/users/{id}", nil)
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("id", tc.IDStr)
+		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
-	// Act
-	ts.handler.GetByID(rr, req)
+		setMockReadDB(ts.mock, tc.ID, tc.MockReadDBWithErr)
 
-	// Assert
-	assert.Equal(ts.T(), http.StatusOK, rr.Code)
+		// Act
+		ts.handler.GetByID(rr, req)
+
+		// Assert
+		assert.Equal(ts.T(), tc.ExpectedStatusCode, rr.Code)
+	}
 }
 
 func (ts *UserTransactionSuite) TestReadDB() {
