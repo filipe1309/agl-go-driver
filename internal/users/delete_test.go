@@ -14,8 +14,8 @@ import (
 func (ts *UserTransactionSuite) TestSoftDelete() {
 	tcs := []struct {
 		Name 						 string
-		ID                 string
-		MockID             int64
+		IDStr                 string
+		ID             int64
 		WithMock           bool
 		MockWithErr        bool
 		ExpectedStatusCode int
@@ -30,11 +30,11 @@ func (ts *UserTransactionSuite) TestSoftDelete() {
 		rr := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodDelete, "/users/{id}", nil)
 		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("id", tc.ID)
+		ctx.URLParams.Add("id", tc.IDStr)
 		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
 		if tc.WithMock {
-			setMockSoftDeleteDB(ts.mock, tc.MockID, tc.MockWithErr)
+			setMockSoftDeleteDB(ts.mock, tc.ID, tc.MockWithErr)
 		}
 
 		// Act
