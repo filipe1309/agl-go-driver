@@ -15,42 +15,42 @@ import (
 func (ts *FolderTransactionSuite) TestCreate() {
 	tcs := []struct {
 		Name                string
-		FolderID            any
+		ParentID            any
 		WithMockDB          bool
 		MockInsertDBWithErr bool
 		ExpectedStatusCode  int
 	}{
 		{
 			Name:                "Success - insert on root",
-			FolderID:            nil,
+			ParentID:            nil,
 			WithMockDB:          true,
 			MockInsertDBWithErr: false,
 			ExpectedStatusCode:  http.StatusCreated,
 		},
 		{
 			Name:                "Success - insert on existent folder",
-			FolderID:            int64(1),
+			ParentID:            int64(1),
 			WithMockDB:          true,
 			MockInsertDBWithErr: false,
 			ExpectedStatusCode:  http.StatusCreated,
 		},
 		{
 			Name:                "DB error",
-			FolderID:            int64(1),
+			ParentID:            int64(1),
 			WithMockDB:          true,
 			MockInsertDBWithErr: true,
 			ExpectedStatusCode:  http.StatusInternalServerError,
 		},
 		{
 			Name:                "Invalid user - empty name",
-			FolderID:            int64(1),
+			ParentID:            int64(1),
 			WithMockDB:          false,
 			MockInsertDBWithErr: false,
 			ExpectedStatusCode:  http.StatusBadRequest,
 		},
 		{
 			Name:                "Invalid json",
-			FolderID:            int64(1),
+			ParentID:            int64(1),
 			WithMockDB:          false,
 			MockInsertDBWithErr: false,
 			ExpectedStatusCode:  http.StatusBadRequest,
@@ -59,8 +59,8 @@ func (ts *FolderTransactionSuite) TestCreate() {
 
 	for _, tc := range tcs {
 		// Arrange
-		if tc.FolderID != nil {
-			ts.entity.ParentID = common.ValidNullInt64(tc.FolderID.(int64))
+		if tc.ParentID != nil {
+			ts.entity.ParentID = common.ValidNullInt64(tc.ParentID.(int64))
 		}
 
 		if tc.Name == "Invalid user - empty name" {
@@ -76,7 +76,7 @@ func (ts *FolderTransactionSuite) TestCreate() {
 		req := httptest.NewRequest(http.MethodPost, "/folders", &b)
 
 		if tc.WithMockDB {
-			setMockInsertDB(ts.mock, ts.entity, tc.FolderID, tc.MockInsertDBWithErr)
+			setMockInsertDB(ts.mock, ts.entity, tc.ParentID, tc.MockInsertDBWithErr)
 		}
 
 		// Act

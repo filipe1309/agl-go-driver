@@ -15,7 +15,6 @@ func (ts *FolderTransactionSuite) TestSoftDelete() {
 	tcs := []struct {
 		Name                       string
 		IDStr                      string
-		ID                         int64
 		WithMockDB                 bool
 		MockWithFilesReadAllDBErr  bool
 		MockWithFilesUpdateDBErr   bool
@@ -24,13 +23,13 @@ func (ts *FolderTransactionSuite) TestSoftDelete() {
 		MockWithSoftDeleteDBErr    bool
 		ExpectedStatusCode         int
 	}{
-		{"Success", "1", 1, true, false, false, false, false, false, http.StatusNoContent},
-		{"Invalid url param - id", "A", -1, false, false, false, false, false, false, http.StatusBadRequest},
-		{"DB error - files read all", "25", 25, true, true, false, false, false, false, http.StatusInternalServerError},
-		{"DB error - files update 1", "25", 25, true, false, true, false, false, false, http.StatusInternalServerError},
-		{"DB error - files update 2", "25", 25, true, false, false, true, false, false, http.StatusInternalServerError},
-		{"DB error - read sub folder", "1", 1, true, false, false, false, true, false, http.StatusInternalServerError},
-		{"DB error - soft delete", "1", 1, true, false, false, false, false, true, http.StatusInternalServerError},
+		{"Success", "1", true, false, false, false, false, false, http.StatusNoContent},
+		{"Invalid url param - id", "A", false, false, false, false, false, false, http.StatusBadRequest},
+		{"DB error - files read all", "25", true, true, false, false, false, false, http.StatusInternalServerError},
+		{"DB error - files update 1", "25", true, false, true, false, false, false, http.StatusInternalServerError},
+		{"DB error - files update 2", "25", true, false, false, true, false, false, http.StatusInternalServerError},
+		{"DB error - read sub folder", "1", true, false, false, false, true, false, http.StatusInternalServerError},
+		{"DB error - soft delete", "1", true, false, false, false, false, true, http.StatusInternalServerError},
 	}
 
 	for _, tc := range tcs {

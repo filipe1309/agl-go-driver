@@ -12,7 +12,6 @@ import (
 func (ts *FolderTransactionSuite) TestGetByID() {
 	tcs := []struct {
 		Name                       string
-		ID                         int
 		IDStr                      string
 		WithMockDB                 bool
 		MockReadFolderDBWithErr    bool
@@ -22,7 +21,6 @@ func (ts *FolderTransactionSuite) TestGetByID() {
 	}{
 		{
 			Name:                       "Success",
-			ID:                         1,
 			IDStr:                      "1",
 			WithMockDB:                 true,
 			MockReadFolderDBWithErr:    false,
@@ -32,7 +30,6 @@ func (ts *FolderTransactionSuite) TestGetByID() {
 		},
 		{
 			Name:                      "Invalid url param - id",
-			ID:                        0,
 			IDStr:                     "A",
 			WithMockDB:                false,
 			MockReadFolderDBWithErr:   false,
@@ -41,7 +38,6 @@ func (ts *FolderTransactionSuite) TestGetByID() {
 		},
 		{
 			Name:                       "DB error - read folder",
-			ID:                         1,
 			IDStr:                      "1",
 			WithMockDB:                 true,
 			MockReadFolderDBWithErr:    true,
@@ -51,7 +47,6 @@ func (ts *FolderTransactionSuite) TestGetByID() {
 		},
 		{
 			Name:                       "DB error - read sub folder",
-			ID:                         1,
 			IDStr:                      "1",
 			WithMockDB:                 true,
 			MockReadFolderDBWithErr:    false,
@@ -61,7 +56,6 @@ func (ts *FolderTransactionSuite) TestGetByID() {
 		},
 		{
 			Name:                       "DB error - read all files",
-			ID:                         1,
 			IDStr:                      "1",
 			WithMockDB:                 true,
 			MockReadFolderDBWithErr:    false,
