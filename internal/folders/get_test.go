@@ -10,22 +10,91 @@ import (
 )
 
 func (ts *FolderTransactionSuite) TestGetByID() {
-	// Arrange
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/folders/{id}", nil)
-	ctx := chi.NewRouteContext()
-	ctx.URLParams.Add("id", "1")
-	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
+	tcs := []struct {
+		Name                       string
+		ID                         int
+		IDStr                      string
+		WithMockDB                 bool
+		MockReadFolderDBWithErr    bool
+		MockReadSubFolderDBWithErr bool
+		MockFilesReadAllDBWithErr  bool
+		ExpectedStatusCode         int
+	}{
+		{
+			Name:                       "Success",
+			ID:                         1,
+			IDStr:                      "1",
+			WithMockDB:                 true,
+			MockReadFolderDBWithErr:    false,
+			MockReadSubFolderDBWithErr: false,
+			MockFilesReadAllDBWithErr:  false,
+			ExpectedStatusCode:         http.StatusOK,
+		},
+		{
+			Name:                      "Invalid url param - id",
+			ID:                        0,
+			IDStr:                     "A",
+			WithMockDB:                false,
+			MockReadFolderDBWithErr:   false,
+			MockFilesReadAllDBWithErr: false,
+			ExpectedStatusCode:        http.StatusBadRequest,
+		},
+		{
+			Name:                       "DB error - read folder",
+			ID:                         1,
+			IDStr:                      "1",
+			WithMockDB:                 true,
+			MockReadFolderDBWithErr:    true,
+			MockReadSubFolderDBWithErr: false,
+			MockFilesReadAllDBWithErr:  false,
+			ExpectedStatusCode:         http.StatusInternalServerError,
+		},
+		{
+			Name:                       "DB error - read sub folder",
+			ID:                         1,
+			IDStr:                      "1",
+			WithMockDB:                 true,
+			MockReadFolderDBWithErr:    false,
+			MockReadSubFolderDBWithErr: true,
+			MockFilesReadAllDBWithErr:  false,
+			ExpectedStatusCode:         http.StatusInternalServerError,
+		},
+		{
+			Name:                       "DB error - read all files",
+			ID:                         1,
+			IDStr:                      "1",
+			WithMockDB:                 true,
+			MockReadFolderDBWithErr:    false,
+			MockReadSubFolderDBWithErr: false,
+			MockFilesReadAllDBWithErr:  true,
+			ExpectedStatusCode:         http.StatusInternalServerError,
+		},
+	}
 
-	setMockReadFolderDB(ts.mock, false)
-	setMockReadSubFolderDB(ts.mock, false)
-	setMockFilesReadAllDB(ts.mock, false)
+	for _, tc := range tcs {
+		// Arrange
+		rr := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodGet, "/folders/{id}", nil)
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("id", tc.IDStr)
+		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
-	// Act
-	ts.handler.GetByID(rr, req)
+		if tc.WithMockDB {
+			setMockReadFolderDB(ts.mock, tc.MockReadFolderDBWithErr)
+			if !tc.MockReadFolderDBWithErr {
+				setMockReadSubFolderDB(ts.mock, tc.MockReadSubFolderDBWithErr)
+				if !tc.MockReadSubFolderDBWithErr {
+					setMockFilesReadAllDB(ts.mock, tc.MockFilesReadAllDBWithErr)
+				}
+			}
+		}
 
-	// Assert
-	assert.Equal(ts.T(), http.StatusOK, rr.Code)
+		// Act
+		ts.handler.GetByID(rr, req)
+
+		// Assert
+		assert.Equal(ts.T(), tc.ExpectedStatusCode, rr.Code)
+	}
 }
 
 func (ts *FolderTransactionSuite) TestReadFolderDB() {
