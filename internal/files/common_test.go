@@ -46,10 +46,14 @@ func TestFileSuite(t *testing.T) {
 	suite.Run(t, new(FileTransactionSuite))
 }
 
-func setMockReadDB(mock sqlmock.Sqlmock) {
+func setMockReadDB(mock sqlmock.Sqlmock, err bool) {
 	rows := sqlmock.NewRows([]string{"id", "folder_id", "owner_id", "name", "type", "path", "created_at", "updated_at", "deleted"}).
 		AddRow(1, 1, 1, "Test file 1", "testtype", "testpath", time.Now(), time.Now(), false)
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM files WHERE id = $1`)).
+	exp := mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM files WHERE id = $1`)).
 		WithArgs(1).
 		WillReturnRows(rows)
+
+	if err {
+		exp.WillReturnError(sql.ErrNoRows)
+	}
 }

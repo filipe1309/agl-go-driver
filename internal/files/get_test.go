@@ -6,7 +6,7 @@ import (
 
 func (ts *FileTransactionSuite) TestReadDB() {
 	// Arrange
-	setMockReadDB(ts.mock)
+	setMockReadDB(ts.mock, false)
 
 	// Act
 	_, err := ReadDB(ts.conn, 1)
