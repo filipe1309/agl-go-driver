@@ -14,35 +14,104 @@ import (
 )
 
 func (ts *FileTransactionSuite) TestUpdate() {
-	// Arrange
-	file := &File{
-		ID:   1,
-		Name: "Test file 2",
+	tcs := []struct {
+		Name                string
+		IDStr               string
+		WithMock            bool
+		MockFile            *File
+		MockReadDBWithErr   bool
+		MockUpdateDBWithErr bool
+		ExpectedStatusCode  int
+	}{
+		{
+			Name:                "Success",
+			IDStr:               "1",
+			WithMock:            true,
+			MockFile:            &File{ID: 1, Name: "Test file 2"},
+			MockReadDBWithErr:   false,
+			MockUpdateDBWithErr: false,
+			ExpectedStatusCode:  http.StatusOK,
+		},
+		{
+			Name:                "Invalid file - no name",
+			IDStr:               "1",
+			WithMock:            true,
+			MockFile:            &File{ID: 1},
+			MockReadDBWithErr:   false,
+			MockUpdateDBWithErr: false,
+			ExpectedStatusCode:  http.StatusBadRequest,
+		},
+		{
+			Name:                "Invalid json - empty body",
+			IDStr:               "1",
+			WithMock:            true,
+			MockFile:            nil,
+			MockReadDBWithErr:   false,
+			MockUpdateDBWithErr: false,
+			ExpectedStatusCode:  http.StatusBadRequest,
+		},
+		{
+			Name:                "Invalid url param - id",
+			IDStr:               "A",
+			WithMock:            false,
+			MockFile:            &File{ID: -1, Name: "Test file 1"},
+			MockReadDBWithErr:   false,
+			MockUpdateDBWithErr: false,
+			ExpectedStatusCode:  http.StatusBadRequest,
+		},
+		{
+			Name:                "DB error - read",
+			IDStr:               "1",
+			WithMock:            true,
+			MockFile:            &File{ID: 1, Name: "Test file 1"},
+			MockReadDBWithErr:   true,
+			MockUpdateDBWithErr: false,
+			ExpectedStatusCode:  http.StatusInternalServerError,
+		},
+
+		{
+			Name:                "DB error - update",
+			IDStr:               "1",
+			WithMock:            true,
+			MockFile:            &File{ID: 1, Name: "Test file 2"},
+			MockReadDBWithErr:   false,
+			MockUpdateDBWithErr: true,
+			ExpectedStatusCode:  http.StatusInternalServerError,
+		},
 	}
 
-	var b bytes.Buffer
-	err := json.NewEncoder(&b).Encode(file)
-	assert.NoError(ts.T(), err)
+	for _, tc := range tcs {
+		// Arrange
+		var b bytes.Buffer
+		if tc.MockFile != nil {
+			err := json.NewEncoder(&b).Encode(tc.MockFile)
+			assert.NoError(ts.T(), err)
+		}
 
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPut, "/files/{id}", &b)
-	ctx := chi.NewRouteContext()
-	ctx.URLParams.Add("id", "1")
-	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
+		rr := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPut, "/files/{id}", &b)
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("id", tc.IDStr)
+		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 
-	setMockReadDB(ts.mock)
-	setMockUpdateDB(ts.mock, 1)
+		if tc.WithMock {
+			setMockReadDB(ts.mock, tc.MockReadDBWithErr)
+			if !tc.MockReadDBWithErr && tc.MockFile != nil && tc.MockFile.Name != "" {
+				setMockUpdateDB(ts.mock, 1, tc.MockUpdateDBWithErr)
+			}
+		}
 
-	// Act
-	ts.handler.Update(rr, req)
+		// Act
+		ts.handler.Update(rr, req)
 
-	// Assert
-	assert.Equal(ts.T(), http.StatusOK, rr.Code)
+		// Assert
+		assert.Equal(ts.T(), tc.ExpectedStatusCode, rr.Code)
+	}
 }
 
 func (ts *FileTransactionSuite) TestUpdateDB() {
 	// Arrange
-	setMockUpdateDB(ts.mock, 1)
+	setMockUpdateDB(ts.mock, 1, false)
 
 	// Act
 	_, err := UpdateDB(ts.conn, 1, &File{
@@ -53,8 +122,12 @@ func (ts *FileTransactionSuite) TestUpdateDB() {
 	assert.NoError(ts.T(), err)
 }
 
-func setMockUpdateDB(mock sqlmock.Sqlmock, id int) {
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE files SET name = $1, updated_at = $2, deleted = $3 WHERE id = $4`)).
+func setMockUpdateDB(mock sqlmock.Sqlmock, id int, err bool) {
+	exp := mock.ExpectExec(regexp.QuoteMeta(`UPDATE files SET name = $1, updated_at = $2, deleted = $3 WHERE id = $4`)).
 		WithArgs("Test file 2", sqlmock.AnyArg(), false, id).
 		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	if err {
+		exp.WillReturnError(sqlmock.ErrCancelled)
+	}
 }
