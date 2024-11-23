@@ -1,5 +1,7 @@
 package users
 
+import "time"
+
 func (h *handler) authenticate(login, password string) (*User, error) {
 	stmt := `SELECT * FROM users WHERE login = $1 AND password = $2`
 
@@ -13,6 +15,17 @@ func (h *handler) authenticate(login, password string) (*User, error) {
 	return &user, nil
 }
 
-func Authenticate(login, password string) (*User, error) {
-	return gh.authenticate(login, password)
+func (h *handler) updateLastLogin(user *User) (int64, error) {
+	user.LastLogin = time.Now()
+	return UpdateDB(h.db, user.ID, user)
+}
+
+func Authenticate(login, password string) (u *User, err error) {
+	u, err = gh.authenticate(login, password)
+	if err != nil {
+		return
+	}
+
+	_, err = gh.updateLastLogin(u)
+	return
 }
