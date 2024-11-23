@@ -7,7 +7,7 @@ type Authenticated interface {
 	GetName() string
 }
 
-type authenticateFunc = func(string, string) (Authenticated, error)
+type authenticateFunc func(string, string) (Authenticated, error)
 
 type handler struct {
 	authenticate authenticateFunc

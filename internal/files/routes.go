@@ -18,11 +18,11 @@ type handler struct {
 func SetRoutes(router chi.Router, db *sql.DB, b *bucket.Bucket, q *queue.Queue) {
 	h := handler{db, b, q}
 
-	router.Group(func(r chi.Router) {
+	router.Route("/files",func(r chi.Router) {
 		r.Use(auth.Validate)
 
-		r.Post("/folders", h.Create)
-		r.Put("/folders/{id}", h.Update)
-		r.Delete("/folders/{id}", h.SoftDelete)
+		r.Post("/", h.Create)
+		r.Put("/{id}", h.Update)
+		r.Delete("/{id}", h.SoftDelete)
 	})
 }

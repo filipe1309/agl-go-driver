@@ -29,6 +29,14 @@ func encryptPassword(password string) string {
 	return fmt.Sprintf("%x", md5.Sum([]byte(password)))
 }
 
+func (u *User) GetID() int64 {
+	return u.ID
+}
+
+func (u *User) GetName() string {
+	return u.Name
+}
+
 func (u *User) SetPassword(password string) {
 	u.Password = encryptPassword(password)
 }
