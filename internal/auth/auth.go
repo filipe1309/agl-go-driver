@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/filipe1309/agl-go-driver/internal/users"
 	"github.com/golang-jwt/jwt/v5"
@@ -11,13 +12,25 @@ import (
 var jwtSecret = "34lddd654j6ha6s54klj7dhja7sadjksldiushf8r9ybc9brbcyr32"
 
 type Claims struct {
-	UserID string `json:"user_id"`
+	UserID   int64  `json:"user_id"`
 	UserName string `json:"user_name"`
 	jwt.RegisteredClaims
 }
 
 func createToken(user users.User) (string, error) {
-	return jwtSecret, nil
+	expirationTime := time.Now().Add(30 * time.Minute)
+
+	claims := &Claims{
+		UserID:   user.ID,
+		UserName: user.Name,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(jwtSecret)
 }
 
 type Credentials struct {
@@ -37,6 +50,13 @@ func Auth(rw http.ResponseWriter, r *http.Request) {
 	// Validate user (authenticate)
 
 	// Create token
+	token, err := createToken(users.User{ID: 1, Name: "admin"})
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	// Response with token
+	rw.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(rw).Encode(map[string]string{"token": token})
 }
