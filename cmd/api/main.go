@@ -35,7 +35,7 @@ func main() {
 
 	// Start server
 	log.Println("Server running on port 8080")
-	http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("SEVER_PORT")), r)
+	http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")), r)
 }
 
 func getSeessions() (*sql.DB, *bucket.Bucket, *queue.Queue) {
