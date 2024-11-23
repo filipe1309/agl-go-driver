@@ -61,3 +61,8 @@ go get github.com/stretchr/testify/suite
 ```
 
 
+## Auth
+
+```bash
+go get github.com/golang-jwt/jwt/v5
+```
