@@ -17,7 +17,7 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func createToken(user users.User) (string, error) {
+func createToken(user *users.User) (string, error) {
 	expirationTime := time.Now().Add(30 * time.Minute)
 
 	claims := &Claims{
@@ -48,9 +48,14 @@ func Auth(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validate user (authenticate)
+	user, err := users.Authenticate(credentials.Username, credentials.Password)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
 	// Create token
-	token, err := createToken(users.User{ID: 1, Name: "admin"})
+	token, err := createToken(user)
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
