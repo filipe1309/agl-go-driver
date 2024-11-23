@@ -29,9 +29,8 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: replace hardcoded ownerID with session user
-	ownerID := 1
-	fileEntity, err := New(int64(ownerID), fileHeader.Filename, fileHeader.Header.Get("Content-Type"), path)
+	ownerID := r.Context().Value("user_id").(int64)
+	fileEntity, err := New(ownerID, fileHeader.Filename, fileHeader.Header.Get("Content-Type"), path)
 	if err != nil {
 		h.bucket.Delete(path)
 		http.Error(w, err.Error(), http.StatusBadRequest)
