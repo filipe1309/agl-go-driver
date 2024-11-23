@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/filipe1309/agl-go-driver/internal/users"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -17,12 +16,12 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func createToken(user *users.User) (string, error) {
+func createToken(au Authenticated) (string, error) {
 	expirationTime := time.Now().Add(30 * time.Minute)
 
 	claims := &Claims{
-		UserID:   user.ID,
-		UserName: user.Name,
+		UserID:   au.GetID(),
+		UserName: au.GetName(),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -38,7 +37,7 @@ type Credentials struct {
 	Password string `json:"password"`
 }
 
-func Auth(rw http.ResponseWriter, r *http.Request) {
+func (h *handler) auth(rw http.ResponseWriter, r *http.Request) {
 	// Payload decode
 	var credentials Credentials
 	err := json.NewDecoder(r.Body).Decode(&credentials)
@@ -47,15 +46,15 @@ func Auth(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate user (authenticate)
-	user, err := users.Authenticate(credentials.Username, credentials.Password)
+	// Validate authenticatedUser (authenticate)
+	authenticatedUser, err := h.authenticate(credentials.Username, credentials.Password)
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	// Create token
-	token, err := createToken(user)
+	token, err := createToken(authenticatedUser)
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
