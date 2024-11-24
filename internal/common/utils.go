@@ -1,6 +1,7 @@
 package common
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"reflect"
@@ -65,4 +66,8 @@ func InvalidNullInt64(i int64) NullInt64 {
 		Int64: i,
 		Valid: false,
 	}
+}
+
+func SetUserIDInContext(reqCtx context.Context, userID int64) context.Context {
+	return context.WithValue(reqCtx, "user_id", userID)
 }

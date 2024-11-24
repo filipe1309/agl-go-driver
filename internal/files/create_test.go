@@ -93,6 +93,7 @@ func (ts *FileTransactionSuite) TestCreate() {
 		rr := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPost, "/files", body)
 		req.Header.Set("Content-Type", mw.FormDataContentType())
+		req = req.WithContext(common.SetUserIDInContext(req.Context(), 1))
 
 		if tc.FolderID != nil {
 			req.Form = make(map[string][]string)

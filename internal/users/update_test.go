@@ -11,6 +11,7 @@ import (
 	"regexp"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/filipe1309/agl-go-driver/internal/common"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 )
@@ -95,6 +96,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("id", tc.IDStr)
 		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
+		req = req.WithContext(common.SetUserIDInContext(req.Context(), tc.MockUser.ID))
 
 		if tc.WithMock {
 			setMockUpdateDB(ts.mock, int(tc.MockUser.ID), tc.MockUpdatedWithErr)
@@ -125,12 +127,11 @@ func (ts *UserTransactionSuite) TestUpdateDB() {
 }
 
 func setMockUpdateDB(mock sqlmock.Sqlmock, id int, err bool) {
-	exp := mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $2 WHERE id = $3`)).
-		WithArgs(fmt.Sprintf("%s %d", "Test user", id), sqlmock.AnyArg(), id)
+	exp := mock.ExpectExec(regexp.QuoteMeta(`UPDATE users SET name = $1, updated_at = $2, last_login = $3 WHERE id = $4`)).
+		WithArgs(fmt.Sprintf("%s %d", "Test user", id), sqlmock.AnyArg(), sqlmock.AnyArg(), id).
+		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	if err {
 		exp.WillReturnError(sql.ErrNoRows)
-	} else {
-		exp.WillReturnResult(sqlmock.NewResult(1, 1))
 	}
 }
