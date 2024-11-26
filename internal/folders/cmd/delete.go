@@ -15,7 +15,7 @@ func delete() *cobra.Command {
 		Use:   "delete",
 		Short: "Delete a folder",
 		Run: func(cmd *cobra.Command, args []string) {
-			if id > 0 {
+			if id <= 0 {
 				log.Fatal("Please provide an ID")
 			}
 			path := "/folders"

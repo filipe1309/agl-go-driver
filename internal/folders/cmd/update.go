@@ -17,9 +17,9 @@ func update() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "update",
-		Short: "Update a folder name",
+		Short: "Update folder name",
 		Run: func(cmd *cobra.Command, args []string) {
-			if name == "" || id == 0 {
+			if name == "" || id <= 0 {
 				log.Fatal("Please provide a name and an ID")
 			}
 
