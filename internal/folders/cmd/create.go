@@ -28,7 +28,7 @@ func create() *cobra.Command {
 				log.Fatal(err)
 			}
 
-			_, err = requests.Post("/folders", &body, true)
+			_, err = requests.AuthenticatedPost("/folders", &body)
 			if err != nil {
 				log.Fatal(err)
 			}
