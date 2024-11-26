@@ -6,7 +6,12 @@ import (
 )
 
 func AuthenticatedPost(path string, body io.Reader) ([]byte, error) {
-	resp, err := doRequest(http.MethodPost, path, body, true)
+	return Post(path, body, true)
+}
+
+
+func Post(path string, body io.Reader, auth bool) ([]byte, error) {
+	resp, err := doRequest(http.MethodPost, path, body, auth)
 	if err != nil {
 		return nil, err
 	}
