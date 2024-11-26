@@ -24,6 +24,8 @@ up-queue:
 	@echo "🏁 Starting queue..."
 	docker run --name imersao-rabbit --hostname aprenda-golang -p 5672:5672 -d rabbitmq:3
 
+up-all: up-db up-queue
+
 help:
 	@echo "📖 Available commands:"
 	@echo "  make run"

@@ -34,7 +34,7 @@ func main() {
 	users.SetRoutes(r, db)
 
 	// Start server
-	log.Println("Server running on port 8080")
+	log.Println("Server running on port " + os.Getenv("SERVER_PORT"))
 	http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")), r)
 }
 
@@ -46,7 +46,7 @@ func getSeessions() (*sql.DB, *bucket.Bucket, *queue.Queue) {
 
 	// Queue config
 	queueConfig := queue.RabbitMQConfig{
-		URL:       os.Getenv("QUEUE_RABBITMQ_URL"),
+		URL:       "amqp://" + os.Getenv("QUEUE_RABBITMQ_URL"),
 		TopicName: os.Getenv("QUEUE_RABBITMQ_TOPIC"),
 		Timeout:   time.Second * 30,
 	}
@@ -62,8 +62,8 @@ func getSeessions() (*sql.DB, *bucket.Bucket, *queue.Queue) {
 			Region:      aws.String(os.Getenv("AWS_REGION")),
 			Credentials: credentials.NewStaticCredentials(os.Getenv("AWS_KEY"), os.Getenv("AWS_SECRET"), ""),
 		},
-		BucketDownload: os.Getenv("BUCKET_AWS_S3_DOWNLOAD"),
-		BucketUpload:   os.Getenv("BUCKET_AWS_S3_UPLOAD"),
+		BucketDownload: os.Getenv("BUCKET_AWS_S3_DOWNLOAD"), // agl-drive-raw
+		BucketUpload:   os.Getenv("BUCKET_AWS_S3_UPLOAD"),   // agl-drive-gzip
 	}
 
 	bucket, err := bucket.New(bucket.AWSS3Provider, bucketConfig)

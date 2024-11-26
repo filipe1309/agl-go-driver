@@ -66,3 +66,39 @@ go get github.com/stretchr/testify/suite
 ```bash
 go get github.com/golang-jwt/jwt/v5
 ```
+
+## Debug
+
+```bash
+make up-all # db and queue
+```
+
+```bash
+$ docker run --network=host -it --rm -v $(pwd):/tmp postgres bash
+$ cd /tmp/scripts/database
+$ psql -h docker.for.mac.host.internal -U postgres
+
+> create database imersao;
+> \l
+> create user imersao with encrypted password '1234';
+> grant all privileges on database imersao to imersao;
+> exit
+$ psql -h docker.for.mac.host.internal -U postgres -d imersao < users.sql
+$ psql -h docker.for.mac.host.internal -U postgres -d imersao < folders.sql
+$ psql -h docker.for.mac.host.internal -U postgres -d imersao < files.sql
+
+$ psql -h docker.for.mac.host.internal -U postgres
+> \c imersao
+> \dt
+```
+
+```bash
+chmod +x scripts/shell/env.sh
+```
+
+```bash
+. ./scripts/shell/env.sh
+echo $DB_HOST
+```
+
+```bash
