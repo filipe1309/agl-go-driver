@@ -22,3 +22,12 @@ func AuthenticatedGet(path string) ([]byte, error) {
 
 	return io.ReadAll(resp.Body)
 }
+
+func AuthenticatedPut(path string, body io.Reader) ([]byte, error) {
+	resp, err := doRequest(http.MethodPut, path, body, true)
+	if err != nil {
+		return nil, err
+	}
+
+	return io.ReadAll(resp.Body)
+}
