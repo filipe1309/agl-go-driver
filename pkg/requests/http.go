@@ -6,12 +6,11 @@ import (
 )
 
 func AuthenticatedPost(path string, body io.Reader) ([]byte, error) {
-	return Post(path, body, true)
+	return Post(path, body, nil, true)
 }
 
-
-func Post(path string, body io.Reader, auth bool) ([]byte, error) {
-	resp, err := doRequest(http.MethodPost, path, body, auth)
+func Post(path string, body io.Reader, headers map[string]string, auth bool) ([]byte, error) {
+	resp, err := doRequest(http.MethodPost, path, body, nil, auth)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +19,7 @@ func Post(path string, body io.Reader, auth bool) ([]byte, error) {
 }
 
 func AuthenticatedGet(path string) ([]byte, error) {
-	resp, err := doRequest(http.MethodGet, path, nil, true)
+	resp, err := doRequest(http.MethodGet, path, nil, nil, true)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +28,7 @@ func AuthenticatedGet(path string) ([]byte, error) {
 }
 
 func AuthenticatedPut(path string, body io.Reader) ([]byte, error) {
-	resp, err := doRequest(http.MethodPut, path, body, true)
+	resp, err := doRequest(http.MethodPut, path, body, nil, true)
 	if err != nil {
 		return nil, err
 	}
@@ -38,6 +37,6 @@ func AuthenticatedPut(path string, body io.Reader) ([]byte, error) {
 }
 
 func AuthenticatedDelete(path string) error {
-	_, err := doRequest(http.MethodDelete, path, nil, true)
+	_, err := doRequest(http.MethodDelete, path, nil, nil, true)
 	return err
 }

@@ -36,7 +36,7 @@ func create() *cobra.Command {
 				log.Fatal(err)
 			}
 
-			_, err = requests.Post("/users", &body, false)
+			_, err = requests.Post("/users", &body, nil, false)
 			if err != nil {
 				log.Fatal(err)
 			}

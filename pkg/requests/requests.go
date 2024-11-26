@@ -7,11 +7,19 @@ import (
 	"net/http"
 )
 
-func doRequest(method, path string, body io.Reader, auth bool) (*http.Response, error) {
+func doRequest(method, path string, body io.Reader, headers map[string]string, auth bool) (*http.Response, error) {
 	url := fmt.Sprintf("http://localhost:8080%s", path)
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
+	}
+
+	if _, ok := headers["Content-Type"]; !ok {
+		req.Header.Set("Content-Type", "application/json")
+	}
+
+	for k, v := range headers {
+		req.Header.Set(k, v)
 	}
 
 	if auth {
