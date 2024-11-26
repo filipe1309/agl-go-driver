@@ -31,3 +31,8 @@ func AuthenticatedPut(path string, body io.Reader) ([]byte, error) {
 
 	return io.ReadAll(resp.Body)
 }
+
+func AuthenticatedDelete(path string) error {
+	_, err := doRequest(http.MethodDelete, path, nil, true)
+	return err
+}

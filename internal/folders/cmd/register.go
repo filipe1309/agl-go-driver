@@ -10,6 +10,7 @@ func Register(c *cobra.Command) {
 
 	cmd.AddCommand(create())
 	cmd.AddCommand(update())
+	cmd.AddCommand(delete())
 	cmd.AddCommand(list())
 
 	c.AddCommand(cmd)
