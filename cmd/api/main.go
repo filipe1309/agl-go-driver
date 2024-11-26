@@ -60,10 +60,10 @@ func getSeessions() (*sql.DB, *bucket.Bucket, *queue.Queue) {
 	bucketConfig := bucket.AWSS3Config{
 		Config: &aws.Config{
 			Region:      aws.String(os.Getenv("AWS_REGION")),
-			Credentials: credentials.NewStaticCredentials(os.Getenv("AWS_KEY"), os.Getenv("AWS_SECRET"), ""),
+			Credentials: credentials.NewStaticCredentials(os.Getenv("AWS_KEY"), os.Getenv("AWS_SECRET"), os.Getenv("AWS_SESSION_TOKEN")),
 		},
-		BucketDownload: os.Getenv("BUCKET_AWS_S3_DOWNLOAD"), // agl-drive-raw
-		BucketUpload:   os.Getenv("BUCKET_AWS_S3_UPLOAD"),   // agl-drive-gzip
+		BucketDownload: os.Getenv("BUCKET_AWS_S3_DOWNLOAD"),
+		BucketUpload:   os.Getenv("BUCKET_AWS_S3_UPLOAD"),
 	}
 
 	bucket, err := bucket.New(bucket.AWSS3Provider, bucketConfig)
