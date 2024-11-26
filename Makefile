@@ -9,7 +9,10 @@ coverage:
 	@echo "🟢 Running coverage..."
 	go tool cover -html=coverage.out
 
-# run node
+build:
+	@echo "🏗 Building code..."
+	./scripts/shell/build.sh
+
 run:
 	@echo "🏁 Running code..."
 
