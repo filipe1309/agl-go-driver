@@ -35,13 +35,13 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func InsertDB(db *sql.DB, user *User) (int64, error) {
-	stmt := `INSERT INTO users (name, login, password, updated_at) VALUES ($1, $2, $3, $4)`
+func InsertDB(db *sql.DB, user *User) (id int64, err error) {
+	stmt := `INSERT INTO users (name, login, password, updated_at) VALUES ($1, $2, $3, $4) RETURNING id`
 
-	result, err := db.Exec(stmt, user.Name, user.Login, user.Password, user.UpdatedAt)
+	err = db.QueryRow(stmt, user.Name, user.Login, user.Password, user.UpdatedAt).Scan(&id)
 	if err != nil {
 		return -1, err
 	}
 
-	return result.LastInsertId()
+	return
 }

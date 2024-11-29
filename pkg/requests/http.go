@@ -1,9 +1,19 @@
 package requests
 
 import (
+	"errors"
 	"io"
 	"net/http"
 )
+
+func validateResponse(resp *http.Response) ([]byte, error) {
+	data, err := io.ReadAll(resp.Body)
+	if err != nil || resp.StatusCode < 200 || resp.StatusCode >= 399 {
+		return nil, errors.New(string(data))
+	}
+
+	return data, nil
+}
 
 func AuthenticatedPost(path string, body io.Reader) ([]byte, error) {
 	return Post(path, body, nil, true)
@@ -15,7 +25,7 @@ func Post(path string, body io.Reader, headers map[string]string, auth bool) ([]
 		return nil, err
 	}
 
-	return io.ReadAll(resp.Body)
+	return validateResponse(resp)
 }
 
 func AuthenticatedGet(path string) ([]byte, error) {
@@ -24,7 +34,7 @@ func AuthenticatedGet(path string) ([]byte, error) {
 		return nil, err
 	}
 
-	return io.ReadAll(resp.Body)
+	return validateResponse(resp)
 }
 
 func AuthenticatedPut(path string, body io.Reader) ([]byte, error) {
@@ -33,7 +43,7 @@ func AuthenticatedPut(path string, body io.Reader) ([]byte, error) {
 		return nil, err
 	}
 
-	return io.ReadAll(resp.Body)
+	return validateResponse(resp)
 }
 
 func AuthenticatedDelete(path string) error {

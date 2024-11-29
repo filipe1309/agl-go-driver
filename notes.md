@@ -82,6 +82,10 @@ $ psql -h docker.for.mac.host.internal -U postgres
 > \l
 > create user imersao with encrypted password '1234';
 > grant all privileges on database imersao to imersao;
+> grant all privileges on table users to imersao;
+> grant all privileges on table folders to imersao;
+> grant all privileges on table files to imersao;
+> grant usage, select on sequence users_id_seq to imersao;
 > exit
 $ psql -h docker.for.mac.host.internal -U postgres -d imersao < users.sql
 $ psql -h docker.for.mac.host.internal -U postgres -d imersao < folders.sql
@@ -102,3 +106,16 @@ echo $DB_HOST
 ```
 
 ```bash
+go run cmd/api/main.go
+go run cmd/cli/main.go users create --name John --login johndoe --pass 123456
+# OR
+./bin/drive users create -name John -login johndoe -pass 123456
+```
+
+```bash
+# $ docker run --network=host -it --rm -v $(pwd):/tmp postgres bash
+$ docker exec -it imersao-postgres bash
+$ psql -h docker.for.mac.host.internal -U postgres
+> \c imersao
+> \dt;
+> select * from users;

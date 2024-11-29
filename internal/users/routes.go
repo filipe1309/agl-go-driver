@@ -18,15 +18,15 @@ func SetRoutes(router chi.Router, db *sql.DB) {
 
 	router.Route("/users", func(r chi.Router) {
 
-		router.Post("/", gh.Create)
+		r.Post("/", gh.Create)
 
-		router.Group(func(r chi.Router) {
+		r.Group(func(r chi.Router) {
 			r.Use(auth.Validate)
 
-			router.Get("/", gh.List)
-			router.Get("/{id}", gh.GetByID)
-			router.Put("/{id}", gh.Update)
-			router.Delete("/{id}", gh.SoftDelete)
+			r.Get("/", gh.List)
+			r.Get("/{id}", gh.GetByID)
+			r.Put("/{id}", gh.Update)
+			r.Delete("/{id}", gh.SoftDelete)
 		})
 	})
 }

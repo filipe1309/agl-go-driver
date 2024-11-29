@@ -12,8 +12,8 @@ import (
 
 func create() *cobra.Command {
 	var (
-		name string
-		login string
+		name     string
+		login    string
 		password string
 	)
 
@@ -26,8 +26,8 @@ func create() *cobra.Command {
 			}
 
 			user := users.User{
-				Name: name,
-				Login: login,
+				Name:     name,
+				Login:    login,
 				Password: password,
 			}
 			var body bytes.Buffer
@@ -36,12 +36,12 @@ func create() *cobra.Command {
 				log.Fatal(err)
 			}
 
-			_, err = requests.Post("/users", &body, nil, false)
+			data, err := requests.Post("/users", &body, nil, false)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			log.Printf("User %s created", name)
+			log.Printf("User %s created - data: %s", user.Name, string(data))
 		},
 	}
 
