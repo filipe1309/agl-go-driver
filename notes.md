@@ -133,4 +133,34 @@ go run cmd/cli/main.go auth --user johndoe --pass 123456
 ./bin/drive auth -user johndoe -pass 123456
 ```
 
+List
+
 ```bash
+go run cmd/cli/main.go users list
+# OR
+./bin/drive users list
+```
+
+Get
+
+```bash
+go run cmd/cli/main.go users get --id 1
+# OR
+./bin/drive users get -id 1
+```
+
+Update
+
+```bash
+go run cmd/cli/main.go users update --id 1 --name "John Doe New Name"
+# OR
+./bin/drive users update -id 1 -name "John Doe New Name"
+```
+
+Delete
+
+```bash
+go run cmd/cli/main.go users delete --id 2
+# OR
+./bin/drive users delete -id 2
+```

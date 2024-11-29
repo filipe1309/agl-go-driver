@@ -19,8 +19,8 @@ func Validate(next http.Handler) http.Handler {
 
 		claims := new(Claims)
 
-		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-			return jwtSecret, nil
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
+			return []byte(jwtSecret), nil
 		})
 		if err != nil {
 			if err == jwt.ErrSignatureInvalid {
