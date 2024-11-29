@@ -29,7 +29,7 @@ func createToken(au Authenticated) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
+	return token.SignedString([]byte(jwtSecret))
 }
 
 type Credentials struct {
@@ -60,7 +60,5 @@ func (h *handler) auth(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Response with token
-	rw.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(rw).Encode(map[string]string{"token": token})
+	rw.Write([]byte(token))
 }

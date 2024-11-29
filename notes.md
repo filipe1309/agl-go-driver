@@ -105,6 +105,8 @@ chmod +x scripts/shell/env.sh
 echo $DB_HOST
 ```
 
+Insert
+
 ```bash
 go run cmd/api/main.go
 go run cmd/cli/main.go users create --name John --login johndoe --pass 123456
@@ -119,3 +121,16 @@ $ psql -h docker.for.mac.host.internal -U postgres
 > \c imersao
 > \dt;
 > select * from users;
+````
+
+
+Auth
+
+```bash
+go run cmd/api/main.go
+go run cmd/cli/main.go auth --user johndoe --pass 123456
+# OR
+./bin/drive auth -user johndoe -pass 123456
+```
+
+```bash

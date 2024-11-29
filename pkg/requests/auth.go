@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"net/http"
 	"os"
+	"strings"
 )
 
 type Credentials struct {
@@ -21,7 +23,7 @@ func Auth(path, username, password string) error {
 		return err
 	}
 
-	resp, err := doRequest("POST", path, &body, nil, false)
+	resp, err := doRequest(http.MethodPost, path, &body, nil, false)
 	if err != nil {
 		return err
 	}
@@ -50,6 +52,9 @@ func createTokenCache(body io.ReadCloser) error {
 	if err != nil {
 		return err
 	}
+
+	replacer := strings.NewReplacer("\r", "", "\n", "")
+	data = []byte(replacer.Replace(string(data)))
 
 	_, err = file.Write(data)
 
