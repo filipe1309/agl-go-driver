@@ -8,8 +8,8 @@ import (
 	"regexp"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/filipe1309/agl-go-driver/internal/common"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/guregu/null.v4"
 )
 
 func (ts *FolderTransactionSuite) TestCreate() {
@@ -60,7 +60,8 @@ func (ts *FolderTransactionSuite) TestCreate() {
 	for _, tc := range tcs {
 		// Arrange
 		if tc.ParentID != nil {
-			ts.entity.ParentID = common.ValidNullInt64(tc.ParentID.(int64))
+			ts.entity.ParentID = null.IntFrom(tc.ParentID.(int64))
+			//common.ValidNullInt64(tc.ParentID.(int64))
 		}
 
 		if tc.Name == "Invalid user - empty name" {
@@ -100,7 +101,8 @@ func (ts *FolderTransactionSuite) TestInsertRootDB() {
 
 func (ts *FolderTransactionSuite) TestInsertWithFolderDB() {
 	// Arrange
-	ts.entity.ParentID = common.ValidNullInt64(1)
+	ts.entity.ParentID = null.IntFrom(1)
+	//common.ValidNullInt64(1)
 
 	setMockInsertDB(ts.mock, ts.entity, 1, false)
 

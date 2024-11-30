@@ -86,6 +86,8 @@ $ psql -h docker.for.mac.host.internal -U postgres
 > grant all privileges on table folders to imersao;
 > grant all privileges on table files to imersao;
 > grant usage, select on sequence users_id_seq to imersao;
+> grant usage, select on sequence folders_id_seq to imersao;
+> grant usage, select on sequence files_id_seq to imersao;
 > exit
 $ psql -h docker.for.mac.host.internal -U postgres -d imersao < users.sql
 $ psql -h docker.for.mac.host.internal -U postgres -d imersao < folders.sql
@@ -104,6 +106,10 @@ chmod +x scripts/shell/env.sh
 . ./scripts/shell/env.sh
 echo $DB_HOST
 ```
+
+## Commands
+
+### Users
 
 Insert
 
@@ -163,4 +169,36 @@ Delete
 go run cmd/cli/main.go users delete --id 2
 # OR
 ./bin/drive users delete -id 2
+```
+
+### Folders
+
+Insert
+
+```bash
+go run cmd/api/main.go
+go run cmd/cli/main.go folders create --name "My Folder" --user 1
+# OR
+./bin/drive folders create -name "My Folder" -user 1
+```
+
+null types
+```bash
+go get gopkg.in/guregu/null.v4
+```
+
+Update
+
+```bash
+go run cmd/cli/main.go folders update --id 1 --name "My Folder New Name"
+# OR
+./bin/drive folders update -id 1 -name "My Folder New Name"
+```
+
+Delete
+
+```bash
+go run cmd/cli/main.go folders delete --id 2
+# OR
+./bin/drive folders delete -id 2
 ```

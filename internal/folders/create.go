@@ -36,8 +36,8 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(folder)
 }
 
-func InsertDB(db *sql.DB, folder *Folder) (int64, error) {
-	stmt := `INSERT INTO folders (parent_id, name, updated_at) VALUES ($1, $2, $3)`
+func InsertDB(db *sql.DB, folder *Folder) (id int64, err error) {
+	stmt := `INSERT INTO folders (parent_id, name, updated_at) VALUES ($1, $2, $3) RETURNING id`
 
 	var parentID any
 	if folder.ParentID.Valid {
@@ -46,10 +46,10 @@ func InsertDB(db *sql.DB, folder *Folder) (int64, error) {
 		parentID = nil
 	}
 
-	result, err := db.Exec(stmt, parentID, folder.Name, folder.UpdatedAt)
+	err = db.QueryRow(stmt, parentID, folder.Name, folder.UpdatedAt).Scan(&id)
 	if err != nil {
 		return -1, err
 	}
 
-	return result.LastInsertId()
+	return
 }
