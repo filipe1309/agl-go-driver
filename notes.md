@@ -202,3 +202,11 @@ go run cmd/cli/main.go folders delete --id 2
 # OR
 ./bin/drive folders delete -id 2
 ```
+
+Files
+
+Upload
+
+```bash
+go run cmd/api/main.go
+go run cmd/cli/main.go files upload --filename ./internal/files/testdata/test-image-1.jpg

@@ -20,7 +20,7 @@ func AuthenticatedPost(path string, body io.Reader) ([]byte, error) {
 }
 
 func Post(path string, body io.Reader, headers map[string]string, auth bool) ([]byte, error) {
-	resp, err := doRequest(http.MethodPost, path, body, nil, auth)
+	resp, err := doRequest(http.MethodPost, path, body, headers, auth)
 	if err != nil {
 		return nil, err
 	}

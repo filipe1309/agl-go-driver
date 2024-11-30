@@ -20,8 +20,8 @@ func upload() *cobra.Command {
 	)
 
 	cmd := &cobra.Command{
-		Use:   "create",
-		Short: "Create a new file",
+		Use:   "upload",
+		Short: "Upload a file",
 		Run: func(cmd *cobra.Command, args []string) {
 			if filename == "" {
 				log.Fatal("Please provide a name")
@@ -65,7 +65,7 @@ func upload() *cobra.Command {
 				"Content-Type": mw.FormDataContentType(),
 			}
 
-			_, err = requests.Post("/files", &body, headers, false)
+			_, err = requests.Post("/files", &body, headers, true)
 			if err != nil {
 				log.Fatal(err)
 			}

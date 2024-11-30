@@ -80,8 +80,8 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(fileEntity)
 }
 
-func InsertDB(db *sql.DB, file *File) (int64, error) {
-	stmt := `INSERT INTO files (folder_id, owner_id, name, type, path, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`
+func InsertDB(db *sql.DB, file *File) (id int64, err error) {
+	stmt := `INSERT INTO files (folder_id, owner_id, name, type, path, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
 
 	var folderID any
 	if file.FolderID.Valid {
@@ -90,9 +90,10 @@ func InsertDB(db *sql.DB, file *File) (int64, error) {
 		folderID = nil
 	}
 
-	result, err := db.Exec(stmt, folderID, file.OwnerID, file.Name, file.Type, file.Path, file.UpdatedAt)
+	err = db.QueryRow(stmt, folderID, file.OwnerID, file.Name, file.Type, file.Path, file.UpdatedAt).Scan(&id)
 	if err != nil {
 		return -1, err
 	}
-	return result.LastInsertId()
+
+	return
 }
