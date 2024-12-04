@@ -21,7 +21,7 @@ import (
 )
 
 func main() {
-	db, bucket, queueConn := getSeessions()
+	db, bucket, queueConn := getSessions()
 
 	// Define endpoints
 	r := chi.NewRouter()
@@ -38,7 +38,7 @@ func main() {
 	http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")), r)
 }
 
-func getSeessions() (*sql.DB, *bucket.Bucket, *queue.Queue) {
+func getSessions() (*sql.DB, *bucket.Bucket, *queue.Queue) {
 	db, err := database.NewConnection()
 	if err != nil {
 		log.Fatal(err)
