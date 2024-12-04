@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
@@ -88,12 +89,12 @@ func (ts *UserTransactionSuite) TestInsertDB() {
 }
 
 func setMockInsertDB(mock sqlmock.Sqlmock, entity *User, err bool) {
-	exp := mock.ExpectExec(`INSERT INTO users (name, login, password, updated_at)*`).
+	exp := mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO users (name, login, password, updated_at) VALUES ($1, $2, $3, $4) RETURNING id`)).
 		WithArgs(entity.Name, entity.Login, sqlmock.AnyArg(), sqlmock.AnyArg())
 
 	if err {
 		exp.WillReturnError(sql.ErrNoRows)
 	} else {
-		exp.WillReturnResult(sqlmock.NewResult(1, 1))
+		exp.WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 	}
 }

@@ -142,9 +142,9 @@ func (ts *FileTransactionSuite) TestInsertWithFolderDB() {
 }
 
 func setMockInsertDB(mock sqlmock.Sqlmock, entity *File, folderID any, err bool) {
-	exp := mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO files (folder_id, owner_id, name, type, path, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`)).
+	exp := mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO files (folder_id, owner_id, name, type, path, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`)).
 		WithArgs(folderID, 1, entity.Name, entity.Type, entity.Path, sqlmock.AnyArg()).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 
 	if err {
 		exp.WillReturnError(sqlmock.ErrCancelled)
