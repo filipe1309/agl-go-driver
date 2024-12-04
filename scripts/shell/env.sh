@@ -11,6 +11,9 @@ export QUEUE_RABBITMQ_TOPIC=upload
 export BUCKET_AWS_S3_DOWNLOAD=agl-drive-gzip
 export BUCKET_AWS_S3_UPLOAD=agl-drive-raw
 
+export WORKER_BUCKET_AWS_S3_DOWNLOAD=agl-drive-raw
+export WORKER_BUCKET_AWS_S3_UPLOAD=agl-drive-gzip
+
 export DB_HOST=localhost
 export DB_PORT=5432
 export DB_USER=imersao
