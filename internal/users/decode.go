@@ -17,7 +17,7 @@ func Decode(body io.ReadCloser) (*User, error) {
 		return nil, err
 	}
 
-	user.SetPassword(user.Password)
+	user.ChangePassword(user.Password)
 
 	return user, nil
 }

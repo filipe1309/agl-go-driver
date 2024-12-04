@@ -25,8 +25,9 @@ type User struct {
 	Deleted   bool      `json:"-"`
 }
 
-func encryptPassword(password string) string {
-	return fmt.Sprintf("%x", md5.Sum([]byte(password)))
+func encryptPassword(u *User) string {
+	u.Password = fmt.Sprintf("%x", md5.Sum([]byte(u.Password)))
+	return u.Password
 }
 
 func (u *User) GetID() int64 {
@@ -37,8 +38,17 @@ func (u *User) GetName() string {
 	return u.Name
 }
 
-func (u *User) SetPassword(password string) {
-	u.Password = encryptPassword(password)
+func (u *User) GetPass() string {
+	return u.Password
+}
+
+func (u *User) GetLogin() string {
+	return u.Login
+}
+
+func (u *User) ChangePassword(password string) {
+	u.Password = password
+	encryptPassword(u)
 }
 
 func (u *User) Validate() error {

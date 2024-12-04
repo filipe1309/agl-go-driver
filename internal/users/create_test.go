@@ -60,7 +60,7 @@ func (ts *UserTransactionSuite) TestCreate() {
 			assert.NoError(ts.T(), err)
 		}
 
-		ts.entity.SetPassword(ts.entity.Password)
+		encryptPassword(ts.entity)
 
 		rr := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPost, "/users", &b)
