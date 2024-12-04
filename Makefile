@@ -1,6 +1,5 @@
-.PHONY: help run test up-db
+.PHONY: help run test up-db up-queue up-all down-db down-queue down-all
 
-# run tests
 test:
 	@echo "🟢 Running tests..."
 	go test ./internal/... -v -coverprofile=coverage.out
@@ -35,6 +34,18 @@ up-queue:
 	docker run --name imersao-rabbit --hostname aprenda-golang -p 5672:5672 -p 15672:15672 -d rabbitmq:3-management
 
 up-all: up-db up-queue
+
+down-db:
+	@echo "🏁 Stopping database..."
+	docker stop imersao-postgres
+	docker rm imersao-postgres
+
+down-queue:
+	@echo "🏁 Stopping queue..."
+	docker stop imersao-rabbit
+	docker rm imersao-rabbit
+
+down-all: down-db down-queue
 
 help:
 	@echo "📖 Available commands:"
