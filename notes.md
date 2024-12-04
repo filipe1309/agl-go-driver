@@ -227,3 +227,28 @@ http://localhost:15672
 > guest:guest
 
 
+### List
+
+```bash
+go run cmd/cli/main.go folders list
+# OR
+./bin/drive folders list
+```
+
+## Files
+
+### Update
+
+```bash
+go run cmd/cli/main.go files update --id 1 --name "My File New Name"
+# OR
+./bin/drive files update -id 1 -name "My File New Name"
+```
+
+### Delete
+
+```bash
+go run cmd/cli/main.go files delete --id 2
+# OR
+./bin/drive files delete -id 2
+```

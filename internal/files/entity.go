@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/filipe1309/agl-go-driver/internal/common"
+	"gopkg.in/guregu/null.v4"
 )
 
 var (
@@ -32,15 +32,15 @@ func New(owner_id int64, name, fileType, path string) (*File, error) {
 }
 
 type File struct {
-	ID        int64            `json:"id"`
-	FolderID  common.NullInt64 `json:"-"`
-	OwnerID   int64            `json:"owner_id"`
-	Name      string           `json:"name"`
-	Type      string           `json:"type"`
-	Path      string           `json:"-"`
-	CreatedAt time.Time        `json:"created_at"`
-	UpdatedAt time.Time        `json:"updated_at"`
-	Deleted   bool             `json:"-"`
+	ID        int64     `json:"id"`
+	FolderID  null.Int  `json:"-"`
+	OwnerID   int64     `json:"owner_id"`
+	Name      string    `json:"name"`
+	Type      string    `json:"type"`
+	Path      string    `json:"-"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Deleted   bool      `json:"-"`
 }
 
 func (f *File) Validate() error {

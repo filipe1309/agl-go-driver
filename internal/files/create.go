@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/filipe1309/agl-go-driver/internal/common"
 	"github.com/filipe1309/agl-go-driver/internal/queue"
+	"gopkg.in/guregu/null.v4"
 )
 
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +44,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		fileEntity.FolderID = common.NullInt64{Int64: int64(folderIDInt), Valid: true}
+		fileEntity.FolderID = null.IntFrom(int64(folderIDInt))
 	}
 
 	id, err := InsertDB(h.db, fileEntity)
