@@ -18,7 +18,7 @@ import (
 func main() {
 	// Queue config
 	queueConfig := queue.RabbitMQConfig{
-		URL:       os.Getenv("QUEUE_RABBITMQ_URL"),
+		URL:       "amqp://" + os.Getenv("QUEUE_RABBITMQ_URL"),
 		TopicName: os.Getenv("QUEUE_RABBITMQ_TOPIC"),
 		Timeout:   time.Second * 30,
 	}
@@ -28,17 +28,18 @@ func main() {
 		panic(err)
 	}
 
+	// create a channel to receive messages
 	queueChannel := make(chan queue.QueueDTO)
-	queueConn.Consume(queueChannel)
+	go queueConn.Consume(queueChannel)
 
 	// Bucket config
 	bucketConfig := bucket.AWSS3Config{
 		Config: &aws.Config{
 			Region:      aws.String(os.Getenv("AWS_REGION")),
-			Credentials: credentials.NewStaticCredentials(os.Getenv("AWS_KEY"), os.Getenv("AWS_SECRET"), ""),
+			Credentials: credentials.NewStaticCredentials(os.Getenv("AWS_KEY"), os.Getenv("AWS_SECRET"), os.Getenv("AWS_SESSION_TOKEN")),
 		},
-		BucketDownload: os.Getenv("BUCKET_AWS_S3_DOWNLOAD"),
-		BucketUpload:   os.Getenv("BUCKET_AWS_S3_UPLOAD"),
+		BucketDownload: os.Getenv("WORKER_BUCKET_AWS_S3_DOWNLOAD"),
+		BucketUpload:   os.Getenv("WORKER_BUCKET_AWS_S3_UPLOAD"),
 	}
 
 	bucket, err := bucket.New(bucket.AWSS3Provider, bucketConfig)
@@ -46,12 +47,22 @@ func main() {
 		panic(err)
 	}
 
+	log.Println("waiting for messages...")
 	for msg := range queueChannel {
-		src := fmt.Sprintf("%s/%s", msg.Path, msg.Filename)
+		src := msg.Path
 		dest := fmt.Sprintf("%d_%s", msg.ID, msg.Filename)
-		file, err := bucket.Download(src, dest)
+
+		log.Printf("downloading file %s to %s", src, dest)
+
+		err := bucket.Download(src, dest)
 		if err != nil {
 			log.Printf("error downloading file: %s", err)
+			continue
+		}
+
+		file, err := os.Open(dest)
+		if err != nil {
+			log.Printf("error opening file: %s", err)
 			continue
 		}
 
@@ -94,5 +105,7 @@ func main() {
 			log.Printf("error removing file: %s", err)
 			continue
 		}
+
+		log.Printf("file %s processed with success", src)
 	}
 }

@@ -34,10 +34,10 @@ type awsSession struct {
 	bucketUpload   string
 }
 
-func (awsSession *awsSession) Download(src, dest string) (file *os.File, err error) {
-	file, err = os.Create(dest)
+func (awsSession *awsSession) Download(src, dest string) error {
+	file, err := os.Create(dest)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer file.Close()
 
@@ -46,7 +46,7 @@ func (awsSession *awsSession) Download(src, dest string) (file *os.File, err err
 		Bucket: aws.String(awsSession.bucketDownload),
 		Key:    aws.String(src),
 	})
-	return
+	return err
 }
 
 func (awsSession *awsSession) Upload(file io.Reader, key string) error {

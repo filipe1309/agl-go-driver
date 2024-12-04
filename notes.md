@@ -210,3 +210,20 @@ Upload
 ```bash
 go run cmd/api/main.go
 go run cmd/cli/main.go files upload --filename ./internal/files/testdata/test-image-1.jpg
+# OR
+./bin/drive files upload -filename ./internal/files/testdata/test-image-1.jpg
+```
+
+## Worker
+
+```bash
+go run cmd/worker/main.go
+```
+
+RabbitMQ
+
+Management:
+http://localhost:15672
+> guest:guest
+
+

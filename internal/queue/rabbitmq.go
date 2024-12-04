@@ -44,17 +44,17 @@ func (rc *RabbitMQConnection) Publish(msg []byte) error {
 }
 
 func (rc *RabbitMQConnection) Consume(chanDTO chan<- QueueDTO) error {
-	conn, err := rc.conn.Channel()
+	ch, err := rc.conn.Channel()
 	if err != nil {
 		return err
 	}
 
-	q, err := conn.QueueDeclare(rc.cfg.TopicName, false, false, false, false, nil)
+	q, err := ch.QueueDeclare(rc.cfg.TopicName, false, false, false, false, nil)
 	if err != nil {
 		return err
 	}
 
-	msgs, err := conn.Consume(q.Name, "", true, false, false, false, nil)
+	msgs, err := ch.Consume(q.Name, "", true, false, false, false, nil)
 	if err != nil {
 		return err
 	}

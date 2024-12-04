@@ -3,7 +3,6 @@ package bucket
 import (
 	"fmt"
 	"io"
-	"os"
 	"reflect"
 )
 
@@ -38,7 +37,7 @@ func New(bt BucketType, cfg any) (b *Bucket, err error) {
 
 type BucketInterface interface {
 	Upload(file io.Reader, key string) error
-	Download(src string, dest string) (*os.File, error)
+	Download(src string, dest string) error
 	Delete(src string) error
 }
 
@@ -50,7 +49,7 @@ func (b *Bucket) Upload(file io.Reader, key string) error {
 	return b.provider.Upload(file, key)
 }
 
-func (b *Bucket) Download(src, dest string) (*os.File, error) {
+func (b *Bucket) Download(src, dest string) error {
 	return b.provider.Download(src, dest)
 }
 
