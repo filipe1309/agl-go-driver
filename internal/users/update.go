@@ -11,19 +11,19 @@ import (
 )
 
 func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
-	user := new(User)
-	err := json.NewDecoder(r.Body).Decode(user)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if user.Name == "" {
-		http.Error(w, ErrNameEmpty.Error(), http.StatusBadRequest)
+	user, err := ReadDB(h.db, int64(id))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	user, err = DecodeAndUpdate(r.Body, user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -35,11 +35,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err = ReadDB(h.db, int64(id))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)

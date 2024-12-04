@@ -43,7 +43,7 @@ func TestUserSuite(t *testing.T) {
 
 func setMockReadDB(mock sqlmock.Sqlmock, id int, err bool) {
 	rows := sqlmock.NewRows([]string{"id", "name", "login", "password", "created_at", "updated_at", "last_login", "deleted"}).
-		AddRow(1, "Test name", "testlogin", "testpassword", time.Now(), time.Now(), time.Now(), false)
+		AddRow(1, "Test user 1", "testlogin", "testpassword", time.Now(), time.Now(), time.Now(), false)
 	exp := mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).
 		WithArgs(id)
 

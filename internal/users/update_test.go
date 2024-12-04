@@ -20,8 +20,9 @@ func (ts *UserTransactionSuite) TestUpdate() {
 	tcs := []struct {
 		Name               string
 		IDStr              string
-		WithMock           bool
 		MockUser           *User
+		WithReadDBMock     bool
+		WithUpdateDBMock   bool
 		MockUpdatedWithErr bool
 		MockReadWithErr    bool
 		ExpectedStatusCode int
@@ -29,8 +30,9 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		{
 			Name:               "Success",
 			IDStr:              "1",
-			WithMock:           true,
 			MockUser:           &User{ID: 1, Name: "Test user 1"},
+			WithReadDBMock:     true,
+			WithUpdateDBMock:   true,
 			MockUpdatedWithErr: false,
 			MockReadWithErr:    false,
 			ExpectedStatusCode: http.StatusOK,
@@ -38,7 +40,8 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		{
 			Name:               "Invalid user - no name",
 			IDStr:              "2",
-			WithMock:           false,
+			WithReadDBMock:     true,
+			WithUpdateDBMock:   false,
 			MockUser:           &User{ID: 2},
 			MockUpdatedWithErr: false,
 			MockReadWithErr:    false,
@@ -46,9 +49,10 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		},
 		{
 			Name:               "Invalid json - empty body",
-			IDStr:              "3",
-			WithMock:           false,
+			IDStr:              "0",
 			MockUser:           &User{},
+			WithReadDBMock:     true,
+			WithUpdateDBMock:   false,
 			MockUpdatedWithErr: false,
 			MockReadWithErr:    false,
 			ExpectedStatusCode: http.StatusBadRequest,
@@ -56,26 +60,28 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		{
 			Name:               "Invalid url param - id",
 			IDStr:              "A",
-			WithMock:           false,
 			MockUser:           &User{ID: -1, Name: "Test user A"},
+			WithReadDBMock:     false,
+			WithUpdateDBMock:   false,
 			MockUpdatedWithErr: false,
 			MockReadWithErr:    false,
 			ExpectedStatusCode: http.StatusBadRequest,
 		},
 		{
 			Name:               "DB error - no Update id",
-			IDStr:              "25",
-			WithMock:           true,
-			MockUser:           &User{ID: 25, Name: "Test user 25"},
+			IDStr:              "1",
+			MockUser:           &User{ID: 1, Name: "Test user 1"},
+			WithReadDBMock:     true,
+			WithUpdateDBMock:   true,
 			MockUpdatedWithErr: true,
 			MockReadWithErr:    false,
 			ExpectedStatusCode: http.StatusInternalServerError,
 		},
-
 		{
 			Name:               "DB error - no read id",
 			IDStr:              "26",
-			WithMock:           true,
+			WithReadDBMock:     true,
+			WithUpdateDBMock:   false,
 			MockUser:           &User{ID: 26, Name: "Test user 26"},
 			MockUpdatedWithErr: false,
 			MockReadWithErr:    true,
@@ -98,10 +104,10 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, ctx))
 		req = req.WithContext(common.SetUserIDInContext(req.Context(), tc.MockUser.ID))
 
-		if tc.WithMock {
-			setMockUpdateDB(ts.mock, int(tc.MockUser.ID), tc.MockUpdatedWithErr)
-			if !tc.MockUpdatedWithErr {
-				setMockReadDB(ts.mock, int(tc.MockUser.ID), tc.MockReadWithErr)
+		if tc.WithReadDBMock {
+			setMockReadDB(ts.mock, int(tc.MockUser.ID), tc.MockReadWithErr)
+			if tc.WithUpdateDBMock && !tc.MockReadWithErr {
+				setMockUpdateDB(ts.mock, int(tc.MockUser.ID), tc.MockUpdatedWithErr)
 			}
 		}
 

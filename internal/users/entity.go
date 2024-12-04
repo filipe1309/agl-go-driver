@@ -38,6 +38,16 @@ func (u *User) GetName() string {
 	return u.Name
 }
 
+func (u *User) ChangeName(name string) error {
+	if name == "" {
+		return ErrNameEmpty
+	}
+
+	u.Name = name
+
+	return nil
+}
+
 func (u *User) GetPass() string {
 	return u.Password
 }

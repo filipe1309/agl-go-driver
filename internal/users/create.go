@@ -7,7 +7,7 @@ import (
 )
 
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	user, err := Decode(r.Body)
+	user, err := DecodeAndCreate(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
