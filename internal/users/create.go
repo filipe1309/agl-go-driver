@@ -7,20 +7,11 @@ import (
 )
 
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	user := new(User)
-	err := json.NewDecoder(r.Body).Decode(user)
+	user, err := Decode(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	err = user.Validate()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	user.SetPassword(user.Password)
 
 	id, err := InsertDB(h.db, user)
 	if err != nil {
