@@ -29,13 +29,6 @@ func (h *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 
 func ReadDB(db *sql.DB, id int64) (*User, error) {
 	stmt := `SELECT * FROM users WHERE id = $1`
-
-	var user User
 	row := db.QueryRow(stmt, id)
-	err := row.Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.CreatedAt, &user.UpdatedAt, &user.LastLogin, &user.Deleted)
-	if err != nil {
-		return nil, err
-	}
-
-	return &user, nil
+	return RestoreOne(row)
 }

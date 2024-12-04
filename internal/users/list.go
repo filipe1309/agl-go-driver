@@ -3,7 +3,6 @@ package users
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 )
 
@@ -28,17 +27,5 @@ func ReadAllDB(db *sql.DB) ([]User, error) {
 	}
 	defer rows.Close()
 
-	users := make([]User, 0)
-	for rows.Next() {
-		var user User
-		err := rows.Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.CreatedAt, &user.UpdatedAt, &user.LastLogin, &user.Deleted)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-
-		users = append(users, user)
-	}
-
-	return users, nil
+	return RestoreAll(rows)
 }
