@@ -6,6 +6,7 @@ import (
 
 	"github.com/filipe1309/agl-go-driver/application/grpc/users"
 	"github.com/filipe1309/agl-go-driver/factories"
+	"github.com/filipe1309/agl-go-driver/internal/auth"
 	userspb "github.com/filipe1309/agl-go-driver/proto/v1/users"
 	"github.com/filipe1309/agl-go-driver/repositories"
 	"google.golang.org/grpc"
@@ -26,7 +27,7 @@ func RunGRPCServer() {
 	userService := users.NewUserService(ur, uf)
 
 	// Define grpc server
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.UnaryInterceptor(auth.ValidateTokenInterceptor))
 	userspb.RegisterUserServiceServer(s, userService)
 
 	if err := s.Serve(l); err != nil {
