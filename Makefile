@@ -3,6 +3,7 @@
 test:
 	@echo "🟢 Running tests..."
 	go test ./internal/... -v -coverprofile=coverage.out
+	go test ./application/... -v -coverprofile=coverage.out
 
 coverage:
 	@echo "🟢 Running coverage..."
