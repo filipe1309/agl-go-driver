@@ -10,7 +10,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/filipe1309/agl-go-driver/application/users"
+	"github.com/filipe1309/agl-go-driver/application/http/users"
 	"github.com/filipe1309/agl-go-driver/factories"
 	"github.com/filipe1309/agl-go-driver/internal/auth"
 	"github.com/filipe1309/agl-go-driver/internal/bucket"
