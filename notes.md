@@ -252,3 +252,14 @@ go run cmd/cli/main.go files delete --id 2
 # OR
 ./bin/drive files delete -id 2
 ```
+
+
+# gRPC
+
+```bash
+cd proto/v1
+protoc --go_out=users --go_opt=paths=source_relative user.proto
+```
+```
+
+```bash
