@@ -8,10 +8,17 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+func NewUserService(repo repositories.UserWriteRepository, factory *factories.UserFactory) *UserService {
+	return &UserService{
+		repo:    repo,
+		factory: factory,
+	}
+}
+
 type UserService struct {
 	pb.UnimplementedUserServiceServer
 	repo    repositories.UserWriteRepository
-	factory factories.UserFactory
+	factory *factories.UserFactory
 }
 
 func convertToUserPb(user *domain.User) *pb.User {
