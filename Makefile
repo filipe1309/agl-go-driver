@@ -51,7 +51,7 @@ down-all: down-db down-queue
 proto:
 	@echo "🏁 Generating proto files..."
 	rm -rf proto/v1/users/*.pb.go
-	protoc --proto_path=proto/v1 --go_out=paths=source_relative:proto/v1/users proto/v1/user.proto
+	protoc --proto_path=proto/v1 --go_out=paths=source_relative:proto/v1/users --go-grpc_out=paths=source_relative:proto/v1/users proto/v1/user.proto
 
 help:
 	@echo "📖 Available commands:"
