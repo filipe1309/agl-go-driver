@@ -1,10 +1,20 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 package v1;
 
 option go_package = "github.com/filipe1309/agl-go-driver/proto/v1/users";
+
+message User {
+  int64 id = 1;
+  string name = 2;
+  string login = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  google.protobuf.Timestamp last_login = 6;
+}
 
 message UserRequest {
   int64 id = 1;
@@ -14,10 +24,19 @@ message UserRequest {
 }
 
 message UserResponse {
-  int64 id = 1;
-  string name = 2;
-  string login = 3;
-  google.protobuf.Timestamp created_at = 4;
-  google.protobuf.Timestamp updated_at = 5;
-  google.protobuf.Timestamp last_login = 6;
+  string error = 1;
+  User user = 2;
+}
+
+message UserList {
+  string error = 1;
+  repeated UserResponse users = 2;
+}
+
+service UserService {
+  rpc Create(UserRequest) returns (UserResponse);
+  rpc Read(UserRequest) returns (UserResponse);
+  rpc Update(UserRequest) returns (UserResponse);
+  rpc Delete(UserRequest) returns (UserResponse);
+  rpc List(google.protobuf.Empty) returns (UserList);
 }
