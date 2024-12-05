@@ -14,14 +14,18 @@ type UserService struct {
 	factory factories.UserFactory
 }
 
+func convertToUserPb(user *domain.User) *pb.User {
+	return &pb.User{
+		Id:        user.ID,
+		Name:      user.Name,
+		Login:     user.Login,
+		CreatedAt: timestamppb.New(user.CreatedAt),
+		UpdatedAt: timestamppb.New(user.UpdatedAt),
+	}
+}
+
 func convertToUserResponse(user *domain.User) *pb.UserResponse {
 	return &pb.UserResponse{
-		User: &pb.User{
-			Id:        user.ID,
-			Name:      user.Name,
-			Login:     user.Login,
-			CreatedAt: timestamppb.New(user.CreatedAt),
-			UpdatedAt: timestamppb.New(user.UpdatedAt),
-		},
+		User: convertToUserPb(user),
 	}
 }
