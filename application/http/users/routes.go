@@ -22,7 +22,7 @@ func SetRoutes(router chi.Router, repo repositories.UserWriteRepository, uf *fac
 		r.Post("/", gh.Create)
 
 		r.Group(func(r chi.Router) {
-			r.Use(auth.Validate)
+			r.Use(auth.ValidateTokenMiddleware)
 
 			r.Get("/", gh.List)
 			r.Get("/{id}", gh.GetByID)

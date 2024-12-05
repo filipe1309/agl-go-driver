@@ -16,5 +16,5 @@ type handler struct {
 func NewHandlerAuth(fn authenticateFunc) func (http.ResponseWriter, *http.Request) {
 	h := handler{fn}
 
-	return h.auth
+	return h.authHTTP
 }

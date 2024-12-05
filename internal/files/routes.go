@@ -18,8 +18,8 @@ type handler struct {
 func SetRoutes(router chi.Router, db *sql.DB, b *bucket.Bucket, q *queue.Queue) {
 	h := handler{db, b, q}
 
-	router.Route("/files",func(r chi.Router) {
-		r.Use(auth.Validate)
+	router.Route("/files", func(r chi.Router) {
+		r.Use(auth.ValidateTokenMiddleware)
 
 		r.Post("/", h.Create)
 		r.Put("/{id}", h.Update)

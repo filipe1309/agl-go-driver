@@ -15,7 +15,7 @@ func SetRoutes(router chi.Router, db *sql.DB) {
 	h := handler{db: db}
 
 	router.Route("/folders", func(r chi.Router) {
-		r.Use(auth.Validate)
+		r.Use(auth.ValidateTokenMiddleware)
 
 		r.Get("/", h.List)
 		r.Post("/", h.Create)

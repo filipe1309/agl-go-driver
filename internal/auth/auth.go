@@ -37,7 +37,23 @@ type Credentials struct {
 	Password string `json:"password"`
 }
 
-func (h *handler) auth(rw http.ResponseWriter, r *http.Request) {
+func (h *handler) auth(creds Credentials) (token string, err error, code int) {
+	// Validate authenticatedUser (authenticate)
+	authenticatedUser, err := h.authenticate(creds.Username, creds.Password)
+	if err != nil {
+		return "", err, http.StatusUnauthorized
+	}
+
+	// Create token
+	token, err = createToken(authenticatedUser)
+	if err != nil {
+		return "", err, http.StatusInternalServerError
+	}
+
+	return token, nil, http.StatusOK
+}
+
+func (h *handler) authHTTP(rw http.ResponseWriter, r *http.Request) {
 	// Payload decode
 	var credentials Credentials
 	err := json.NewDecoder(r.Body).Decode(&credentials)
@@ -46,17 +62,9 @@ func (h *handler) auth(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate authenticatedUser (authenticate)
-	authenticatedUser, err := h.authenticate(credentials.Username, credentials.Password)
+	token, err, code := h.auth(credentials)
 	if err != nil {
-		http.Error(rw, err.Error(), http.StatusUnauthorized)
-		return
-	}
-
-	// Create token
-	token, err := createToken(authenticatedUser)
-	if err != nil {
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		http.Error(rw, err.Error(), code)
 		return
 	}
 

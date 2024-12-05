@@ -4,36 +4,16 @@ import (
 	"context"
 	"net/http"
 	"strings"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
-func Validate(next http.Handler) http.Handler {
+func ValidateTokenMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		// Authorization: Bearer <token>
 		tokenString := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-		if tokenString == "" {
-			http.Error(rw, "Authorization header is required", http.StatusUnauthorized)
-			return
-		}
 
-		claims := new(Claims)
-
-		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
-			return []byte(jwtSecret), nil
-		})
+		claims, err, code := validate(tokenString)
 		if err != nil {
-			if err == jwt.ErrSignatureInvalid {
-				http.Error(rw, err.Error(), http.StatusUnauthorized)
-				return
-			}
-
-			http.Error(rw, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		if !token.Valid {
-			http.Error(rw, err.Error(), http.StatusUnauthorized)
+			http.Error(rw, err.Error(), code)
 			return
 		}
 
