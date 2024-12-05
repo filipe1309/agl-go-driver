@@ -260,6 +260,3 @@ go run cmd/cli/main.go files delete --id 2
 cd proto/v1
 protoc --go_out=users --go_opt=paths=source_relative user.proto
 ```
-```
-
-```bash

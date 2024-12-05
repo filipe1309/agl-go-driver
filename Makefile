@@ -1,4 +1,4 @@
-.PHONY: help run test up-db up-queue up-all down-db down-queue down-all
+.PHONY: help run test up-db up-queue up-all down-db down-queue down-all run-api run-worker build coverage proto
 
 test:
 	@echo "🟢 Running tests..."
@@ -47,6 +47,11 @@ down-queue:
 	docker rm imersao-rabbit
 
 down-all: down-db down-queue
+
+proto:
+	@echo "🏁 Generating proto files..."
+	rm -rf proto/v1/users/*.pb.go
+	protoc --proto_path=proto/v1 --go_out=paths=source_relative:proto/v1/users proto/v1/user.proto
 
 help:
 	@echo "📖 Available commands:"
