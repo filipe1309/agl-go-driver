@@ -17,12 +17,3 @@ func New(id int64, name, login, password string) (*User, error) {
 
 	return u, nil
 }
-
-func newLoginUser(login, password string) *User {
-	u := &User{
-		Login:    login,
-		Password: password,
-	}
-	encryptPassword(u)
-	return u
-}

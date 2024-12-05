@@ -1,7 +1,6 @@
 package users
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -16,7 +15,7 @@ func (h *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := ReadDB(h.db, int64(id))
+	user, err := h.factory.RestoreOne(int64(id))
 	if err != nil {
 		// TODO: Check if the error is sql.ErrNoRows and return 404
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -25,10 +24,4 @@ func (h *handler) GetByID(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
-}
-
-func ReadDB(db *sql.DB, id int64) (*User, error) {
-	stmt := `SELECT * FROM users WHERE id = $1`
-	row := db.QueryRow(stmt, id)
-	return RestoreOne(row)
 }

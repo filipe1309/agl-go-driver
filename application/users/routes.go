@@ -1,20 +1,21 @@
 package users
 
 import (
-	"database/sql"
-
+	"github.com/filipe1309/agl-go-driver/factories"
 	"github.com/filipe1309/agl-go-driver/internal/auth"
+	"github.com/filipe1309/agl-go-driver/repositories"
 	"github.com/go-chi/chi/v5"
 )
 
 var gh handler
 
 type handler struct {
-	db *sql.DB
+	repo    repositories.UserWriteRepository
+	factory *factories.UserFactory
 }
 
-func SetRoutes(router chi.Router, db *sql.DB) {
-	gh = handler{db: db}
+func SetRoutes(router chi.Router, repo repositories.UserWriteRepository, uf *factories.UserFactory) {
+	gh = handler{repo, uf}
 
 	router.Route("/users", func(r chi.Router) {
 

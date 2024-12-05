@@ -10,6 +10,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
+	domain "github.com/filipe1309/agl-go-driver/internal/users"
 )
 
 func (ts *UserTransactionSuite) TestCreate() {
@@ -60,7 +61,7 @@ func (ts *UserTransactionSuite) TestCreate() {
 			assert.NoError(ts.T(), err)
 		}
 
-		encryptPassword(ts.entity)
+		ts.entity.ChangePassword(ts.entity.Password)
 
 		rr := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPost, "/users", &b)
@@ -77,18 +78,9 @@ func (ts *UserTransactionSuite) TestCreate() {
 	}
 }
 
-func (ts *UserTransactionSuite) TestInsertDB() {
-	// Arrange
-	setMockInsertDB(ts.mock, ts.entity, false)
 
-	// Act
-	_, err := InsertDB(ts.conn, ts.entity)
 
-	// Assert
-	assert.NoError(ts.T(), err)
-}
-
-func setMockInsertDB(mock sqlmock.Sqlmock, entity *User, err bool) {
+func setMockInsertDB(mock sqlmock.Sqlmock, entity *domain.User, err bool) {
 	exp := mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO users (name, login, password, updated_at) VALUES ($1, $2, $3, $4) RETURNING id`)).
 		WithArgs(entity.Name, entity.Login, sqlmock.AnyArg(), sqlmock.AnyArg())
 

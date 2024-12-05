@@ -45,19 +45,7 @@ func (ts *UserTransactionSuite) TestSoftDelete() {
 	}
 }
 
-func (ts *UserTransactionSuite) TestSoftDeleteDB() {
-	// Arrange
-	setMockSoftDeleteDB(ts.mock, 1, false)
-
-	// Act
-	err := SoftDeleteDB(ts.conn, 1)
-
-	// Assert
-	assert.NoError(ts.T(), err)
-}
-
 func setMockSoftDeleteDB(mock sqlmock.Sqlmock, id int64, err bool) {
-
 	exp := mock.ExpectExec(`UPDATE users SET *`).
 		// WithArgs(AnyTime{}, id).
 		WithArgs(sqlmock.AnyArg(), id)

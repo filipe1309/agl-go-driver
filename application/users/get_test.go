@@ -63,14 +63,3 @@ func (ts *UserTransactionSuite) TestGetByID() {
 		assert.Equal(ts.T(), tc.ExpectedStatusCode, rr.Code)
 	}
 }
-
-func (ts *UserTransactionSuite) TestReadDB() {
-	// Arrange
-	setMockReadDB(ts.mock, 1, false)
-
-	// Act
-	_, err := ReadDB(ts.conn, 1)
-
-	// Assert
-	assert.NoError(ts.T(), err)
-}

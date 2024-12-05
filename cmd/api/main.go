@@ -10,13 +10,15 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/filipe1309/agl-go-driver/application/users"
+	"github.com/filipe1309/agl-go-driver/factories"
 	"github.com/filipe1309/agl-go-driver/internal/auth"
 	"github.com/filipe1309/agl-go-driver/internal/bucket"
 	"github.com/filipe1309/agl-go-driver/internal/files"
 	"github.com/filipe1309/agl-go-driver/internal/folders"
 	"github.com/filipe1309/agl-go-driver/internal/queue"
-	"github.com/filipe1309/agl-go-driver/internal/users"
 	"github.com/filipe1309/agl-go-driver/pkg/database"
+	"github.com/filipe1309/agl-go-driver/repositories"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -31,7 +33,11 @@ func main() {
 
 	files.SetRoutes(r, db, bucket, queueConn)
 	folders.SetRoutes(r, db)
-	users.SetRoutes(r, db)
+
+	// Users DDD
+	ur := repositories.NewUserRepository(db)
+	uf := factories.NewUserFactory(ur)
+	users.SetRoutes(r, ur, uf)
 
 	// Start server
 	log.Println("Server running on port " + os.Getenv("SERVER_PORT"))

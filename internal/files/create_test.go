@@ -111,8 +111,6 @@ func (ts *FileTransactionSuite) TestCreate() {
 		// Act
 		ts.handler.Create(rr, req)
 
-		fmt.Println(rr.Body.String())
-
 		// Assert
 		assert.Equal(ts.T(), tc.ExpectedStatusCode, rr.Code)
 	}

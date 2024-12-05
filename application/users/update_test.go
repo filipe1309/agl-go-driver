@@ -14,13 +14,15 @@ import (
 	"github.com/filipe1309/agl-go-driver/internal/common"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
+
+	domain "github.com/filipe1309/agl-go-driver/internal/users"
 )
 
 func (ts *UserTransactionSuite) TestUpdate() {
 	tcs := []struct {
 		Name               string
 		IDStr              string
-		MockUser           *User
+		MockUser           *domain.User
 		WithReadDBMock     bool
 		WithUpdateDBMock   bool
 		MockUpdatedWithErr bool
@@ -30,7 +32,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		{
 			Name:               "Success",
 			IDStr:              "1",
-			MockUser:           &User{ID: 1, Name: "Test user 1"},
+			MockUser:           &domain.User{ID: 1, Name: "Test user 1"},
 			WithReadDBMock:     true,
 			WithUpdateDBMock:   true,
 			MockUpdatedWithErr: false,
@@ -42,7 +44,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 			IDStr:              "2",
 			WithReadDBMock:     true,
 			WithUpdateDBMock:   false,
-			MockUser:           &User{ID: 2},
+			MockUser:           &domain.User{ID: 2},
 			MockUpdatedWithErr: false,
 			MockReadWithErr:    false,
 			ExpectedStatusCode: http.StatusBadRequest,
@@ -50,7 +52,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		{
 			Name:               "Invalid json - empty body",
 			IDStr:              "0",
-			MockUser:           &User{},
+			MockUser:           &domain.User{},
 			WithReadDBMock:     true,
 			WithUpdateDBMock:   false,
 			MockUpdatedWithErr: false,
@@ -60,7 +62,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		{
 			Name:               "Invalid url param - id",
 			IDStr:              "A",
-			MockUser:           &User{ID: -1, Name: "Test user A"},
+			MockUser:           &domain.User{ID: -1, Name: "Test user A"},
 			WithReadDBMock:     false,
 			WithUpdateDBMock:   false,
 			MockUpdatedWithErr: false,
@@ -70,7 +72,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		{
 			Name:               "DB error - no Update id",
 			IDStr:              "1",
-			MockUser:           &User{ID: 1, Name: "Test user 1"},
+			MockUser:           &domain.User{ID: 1, Name: "Test user 1"},
 			WithReadDBMock:     true,
 			WithUpdateDBMock:   true,
 			MockUpdatedWithErr: true,
@@ -82,7 +84,7 @@ func (ts *UserTransactionSuite) TestUpdate() {
 			IDStr:              "26",
 			WithReadDBMock:     true,
 			WithUpdateDBMock:   false,
-			MockUser:           &User{ID: 26, Name: "Test user 26"},
+			MockUser:           &domain.User{ID: 26, Name: "Test user 26"},
 			MockUpdatedWithErr: false,
 			MockReadWithErr:    true,
 			ExpectedStatusCode: http.StatusInternalServerError,
@@ -117,19 +119,6 @@ func (ts *UserTransactionSuite) TestUpdate() {
 		// Assert
 		assert.Equal(ts.T(), tc.ExpectedStatusCode, rr.Code)
 	}
-}
-
-func (ts *UserTransactionSuite) TestUpdateDB() {
-	// Arrange
-	setMockUpdateDB(ts.mock, 1, false)
-
-	// Act
-	_, err := UpdateDB(ts.conn, 1, &User{
-		Name: "Test user 1",
-	})
-
-	// Assert
-	assert.NoError(ts.T(), err)
 }
 
 func setMockUpdateDB(mock sqlmock.Sqlmock, id int, err bool) {

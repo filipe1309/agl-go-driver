@@ -1,12 +1,11 @@
 package users
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"time"
 
+	domain "github.com/filipe1309/agl-go-driver/internal/users"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -17,19 +16,19 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := ReadDB(h.db, int64(id))
+	user, err := h.factory.RestoreOne(int64(id))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	user, err = DecodeAndUpdate(r.Body, user)
+	user, err = domain.DecodeAndUpdate(r.Body, user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	_, err = UpdateDB(h.db, int64(id), user)
+	_, err = h.repo.UpdateDB(int64(id), user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -37,16 +36,4 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
-}
-
-func UpdateDB(db *sql.DB, id int64, user *User) (int64, error) {
-	user.UpdatedAt = time.Now()
-	stmt := `UPDATE users SET name = $1, updated_at = $2, last_login = $3 WHERE id = $4`
-
-	result, err := db.Exec(stmt, user.Name, user.UpdatedAt, user.LastLogin, id)
-	if err != nil {
-		return -1, err
-	}
-
-	return result.RowsAffected()
 }

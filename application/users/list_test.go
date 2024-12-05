@@ -44,21 +44,6 @@ func (ts *UserTransactionSuite) TestList() {
 	}
 }
 
-func (ts *UserTransactionSuite) TestReadAllDB() {
-	// Arrange
-	setMockReadAllDB(ts.mock, false)
-
-	// Act
-	_, err := ReadAllDB(ts.conn)
-
-	// Assert
-	assert.NoError(ts.T(), err)
-
-	// if len(list) > 1 { // this doesn't work with sqlmock, because it doesn't filter the rows
-	// 	t.Error("Expected 1 row, got", len(list))
-	// }
-}
-
 func setMockReadAllDB(mock sqlmock.Sqlmock, err bool) {
 	rows := sqlmock.NewRows([]string{"id", "name", "login", "password", "created_at", "updated_at", "last_login", "deleted"}).
 		AddRow(1, "Test name", "testlogin", "testpassword", time.Now(), time.Now(), time.Now(), false).
