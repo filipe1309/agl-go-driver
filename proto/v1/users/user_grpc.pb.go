@@ -27,7 +27,7 @@ type UserServiceClient interface {
 	Read(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	Update(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	Delete(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserResponse, error)
-	List(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserList, error)
+	List(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserListResponse, error)
 }
 
 type userServiceClient struct {
@@ -74,8 +74,8 @@ func (c *userServiceClient) Delete(ctx context.Context, in *UserRequest, opts ..
 	return out, nil
 }
 
-func (c *userServiceClient) List(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserList, error) {
-	out := new(UserList)
+func (c *userServiceClient) List(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserListResponse, error) {
+	out := new(UserListResponse)
 	err := c.cc.Invoke(ctx, "/v1.UserService/List", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -91,7 +91,7 @@ type UserServiceServer interface {
 	Read(context.Context, *UserRequest) (*UserResponse, error)
 	Update(context.Context, *UserRequest) (*UserResponse, error)
 	Delete(context.Context, *UserRequest) (*UserResponse, error)
-	List(context.Context, *emptypb.Empty) (*UserList, error)
+	List(context.Context, *emptypb.Empty) (*UserListResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -111,7 +111,7 @@ func (UnimplementedUserServiceServer) Update(context.Context, *UserRequest) (*Us
 func (UnimplementedUserServiceServer) Delete(context.Context, *UserRequest) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedUserServiceServer) List(context.Context, *emptypb.Empty) (*UserList, error) {
+func (UnimplementedUserServiceServer) List(context.Context, *emptypb.Empty) (*UserListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}

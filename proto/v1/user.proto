@@ -28,9 +28,9 @@ message UserResponse {
   User user = 2;
 }
 
-message UserList {
+message UserListResponse {
   string error = 1;
-  repeated UserResponse users = 2;
+  repeated User users = 2;
 }
 
 service UserService {
@@ -38,5 +38,5 @@ service UserService {
   rpc Read(UserRequest) returns (UserResponse);
   rpc Update(UserRequest) returns (UserResponse);
   rpc Delete(UserRequest) returns (UserResponse);
-  rpc List(google.protobuf.Empty) returns (UserList);
+  rpc List(google.protobuf.Empty) returns (UserListResponse);
 }
