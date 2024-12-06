@@ -26,6 +26,9 @@ func RunGRPCServer() {
 	uf := factories.NewUserFactory(ur)
 	userService := users.NewUserService(ur, uf)
 
+	// svc and method bypass token validation
+	auth.AddByPassValidateToken("users.UserService", "Create")
+
 	// Define grpc server
 	s := grpc.NewServer(grpc.UnaryInterceptor(auth.ValidateTokenInterceptor))
 	userspb.RegisterUserServiceServer(s, userService)
