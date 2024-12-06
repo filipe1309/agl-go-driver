@@ -12,6 +12,7 @@ import (
 	"github.com/filipe1309/agl-go-driver/repositories"
 	"github.com/filipe1309/agl-go-driver/services"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 func RunGRPCServer() {
@@ -39,8 +40,13 @@ func RunGRPCServer() {
 		return authService.Authenticate(login, password)
 	})
 
+	creds, err := credentials.NewServerTLSFromFile("certs/server/server.crt", "certs/server/server.key")
+	if err != nil {
+		log.Fatalf("Failed to generate credentials %v", err)
+	}
+
 	// Define grpc server
-	s := grpc.NewServer(grpc.UnaryInterceptor(auth.ValidateTokenInterceptor))
+	s := grpc.NewServer(grpc.Creds(creds), grpc.UnaryInterceptor(auth.ValidateTokenInterceptor))
 	authpb.RegisterAuthServiceServer(s, grpcAuthService)
 	userspb.RegisterUserServiceServer(s, userService)
 

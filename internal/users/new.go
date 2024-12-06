@@ -13,7 +13,7 @@ func New(id int64, name, login, password string) (*User, error) {
 		return nil, err
 	}
 
-	// encryptPassword(u)
+	encryptPassword(u)
 
 	return u, nil
 }

@@ -266,3 +266,32 @@ protoc --proto_path=proto/v1 --go_out=paths=source_relative:proto/v1/users --go-
 ```bash
 go run cmd/api/main.go --mode grpc 
 ```
+
+```bash
+go run cmd/cli/main.go --mode grpc users create --name JonGRPC --login john.grpc --pass 1234
+```
+
+generate local certs
+https://kubernetes.io/docs/tasks/administer-cluster/certificates/
+```bash
+cd certs/server
+# openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 \
+#   -nodes -keyout server.key -out server.crt -subj "/CN=example.com" \
+#   -addext "subjectAltName=DNS:example.com,DNS:*.example.com,IP:10.0.0.1"
+
+cd certs
+openssl genrsa -out ca.key 2048
+openssl req -x509 -new -nodes -key ca.key -subj "/CN=example.com" -days 10000 -out ca.crt
+openssl genrsa -out server.key 2048
+# create csr.conf
+openssl req -new -key server.key -out server.csr -config csr.conf
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key \
+    -CAcreateserial -out server.crt -days 10000 \
+    -extensions v3_ext -extfile csr.conf -sha256
+openssl req  -noout -text -in ./server.csr
+openssl x509  -noout -text -in ./server.crt
+```
+
+
+
+  ```bash
