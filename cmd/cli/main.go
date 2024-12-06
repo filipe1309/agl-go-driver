@@ -14,10 +14,14 @@ import (
 var RootCmd = &cobra.Command{}
 
 func main() {
+	var mode string
+
 	authCmd.Register(RootCmd)
 	filesCmd.Register(RootCmd)
 	foldersCmd.Register(RootCmd)
 	usersCmd.Register(RootCmd)
+
+	RootCmd.Flags().StringVarP(&mode, "mode", "m", "http", "Mode of operation (http, grpc)")
 
 	if err := RootCmd.Execute(); err != nil {
 		log.Fatal(err)

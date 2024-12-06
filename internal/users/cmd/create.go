@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"log"
 
 	"github.com/filipe1309/agl-go-driver/internal/users"
 	"github.com/filipe1309/agl-go-driver/pkg/requests"
+	userspb "github.com/filipe1309/agl-go-driver/proto/v1/users"
 	"github.com/spf13/cobra"
 )
 
@@ -25,23 +27,19 @@ func create() *cobra.Command {
 				log.Fatal("Please provide a name, login and password")
 			}
 
-			user := users.User{
-				Name:     name,
-				Login:    login,
-				Password: password,
-			}
-			var body bytes.Buffer
-			err := json.NewEncoder(&body).Encode(user)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			data, err := requests.Post("/users", &body, nil, false)
-			if err != nil {
-				log.Fatal(err)
+			mode := cmd.Flag("mode").Value.String()
+			switch mode {
+			case "http":
+				createWithHTTP(name, login, password)
+			case "grpc":
+				createWithGRPC(name, login, password)
+			default:
+				log.Fatalf("Mode %s not supported", mode)
 			}
 
-			log.Printf("User %s created - data: %s", user.Name, string(data))
+			// user := createWithHTTP(name, login, password)
+
+			log.Printf("User created")
 		},
 	}
 
@@ -50,4 +48,42 @@ func create() *cobra.Command {
 	cmd.Flags().StringVarP(&password, "pass", "p", "", "User password")
 
 	return cmd
+}
+
+func createWithHTTP(name, login, password string) {
+	user := users.User{
+		Name:     name,
+		Login:    login,
+		Password: password,
+	}
+	var body bytes.Buffer
+	err := json.NewEncoder(&body).Encode(user)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = requests.Post("/users", &body, nil, false)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func createWithGRPC(name, login, password string) {
+	user := &userspb.UserRequest{
+		Name:     name,
+		Login:    login,
+		Password: password,
+	}
+
+	conn := requests.GetGRPCConn()
+	defer conn.Close()
+
+	client := userspb.NewUserServiceClient(conn)
+
+	resp, err := client.Create(context.Background(), user)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("User created with id: %v", resp.User.Id)
 }
