@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"encoding/json"
 	"net/http"
 	"time"
 
@@ -37,6 +36,17 @@ type Credentials struct {
 	Password string `json:"password"`
 }
 
+type Authenticated interface {
+	GetID() int64
+	GetName() string
+}
+
+type authenticateFunc func(string, string) (Authenticated, error)
+
+type handler struct {
+	authenticate authenticateFunc
+}
+
 func (h *handler) auth(creds Credentials) (token string, err error, code int) {
 	// Validate authenticatedUser (authenticate)
 	authenticatedUser, err := h.authenticate(creds.Username, creds.Password)
@@ -51,22 +61,4 @@ func (h *handler) auth(creds Credentials) (token string, err error, code int) {
 	}
 
 	return token, nil, http.StatusOK
-}
-
-func (h *handler) authHTTP(rw http.ResponseWriter, r *http.Request) {
-	// Payload decode
-	var credentials Credentials
-	err := json.NewDecoder(r.Body).Decode(&credentials)
-	if err != nil {
-		http.Error(rw, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	token, err, code := h.auth(credentials)
-	if err != nil {
-		http.Error(rw, err.Error(), code)
-		return
-	}
-
-	rw.Write([]byte(token))
 }

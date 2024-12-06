@@ -20,7 +20,7 @@ func RunHTTPServer() {
 
 	// Define endpoints
 	r := chi.NewRouter()
-	r.Post("/auth", auth.NewHandlerAuth(func(login, password string) (auth.Authenticated, error) {
+	r.Post("/auth", auth.HandleHttpAuth(func(login, password string) (auth.Authenticated, error) {
 		return users.Authenticate(login, password)
 	}))
 
