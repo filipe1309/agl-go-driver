@@ -7,27 +7,25 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-var gh handler
-
 type handler struct {
 	repo    repositories.UserWriteRepository
 	factory *factories.UserFactory
 }
 
 func SetRoutes(router chi.Router, repo repositories.UserWriteRepository, uf *factories.UserFactory) {
-	gh = handler{repo, uf}
+	h := handler{repo, uf}
 
 	router.Route("/users", func(r chi.Router) {
 
-		r.Post("/", gh.Create)
+		r.Post("/", h.Create)
 
 		r.Group(func(r chi.Router) {
 			r.Use(auth.ValidateTokenMiddleware)
 
-			r.Get("/", gh.List)
-			r.Get("/{id}", gh.GetByID)
-			r.Put("/{id}", gh.Update)
-			r.Delete("/{id}", gh.SoftDelete)
+			r.Get("/", h.List)
+			r.Get("/{id}", h.GetByID)
+			r.Put("/{id}", h.Update)
+			r.Delete("/{id}", h.SoftDelete)
 		})
 	})
 }

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package v1;
+
+option go_package = "github.com/filipe1309/agl-go-driver/proto/v1/auth";
+
+message CredentialsRequest {
+  string username = 3;
+  string password = 4;
+}
+
+message TokenResponse {
+  string error = 1;
+  string token = 2;
+}
+
+service AuthService {
+  rpc Login(CredentialsRequest) returns (TokenResponse);
+}
