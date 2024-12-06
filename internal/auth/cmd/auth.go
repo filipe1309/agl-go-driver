@@ -21,9 +21,14 @@ func authenticate() *cobra.Command {
 				log.Fatal("Username and password are required")
 			}
 
-			err := requests.Auth("/auth", username, password)
-			if err != nil {
-				log.Fatal(err)
+			mode := cmd.Flag("mode").Value.String()
+			switch mode {
+			case "http":
+				authWithHTTP(username, password)
+			case "grpc":
+				authWithGRPC(username, password)
+			default:
+				log.Fatalf("Mode %s not supported", mode)
 			}
 		},
 	}
@@ -32,4 +37,18 @@ func authenticate() *cobra.Command {
 	cmd.Flags().StringVarP(&password, "pass", "p", "", "Password")
 
 	return cmd
+}
+
+func authWithHTTP(username, password string) {
+	err := requests.HTTPAuth("/auth", username, password)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func authWithGRPC(username, password string) {
+	err := requests.GRPCAuth(username, password)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

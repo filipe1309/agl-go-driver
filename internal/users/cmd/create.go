@@ -37,8 +37,6 @@ func create() *cobra.Command {
 				log.Fatalf("Mode %s not supported", mode)
 			}
 
-			// user := createWithHTTP(name, login, password)
-
 			log.Printf("User created")
 		},
 	}
