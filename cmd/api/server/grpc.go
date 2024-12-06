@@ -44,9 +44,8 @@ func RunGRPCServer() {
 	authpb.RegisterAuthServiceServer(s, grpcAuthService)
 	userspb.RegisterUserServiceServer(s, userService)
 
+	log.Println("Server running on port 50051")
 	if err := s.Serve(l); err != nil {
 		panic(err)
 	}
-
-	log.Println("Server running on port 50051")
 }
